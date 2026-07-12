@@ -1,0 +1,2536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>zhedaotixuanbo · 个人主页</title>
+    <!-- Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- 引入 markdown-it 核心库 -->
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.0.0/dist/markdown-it.min.js">
+    </script>
+    <!-- 引入 markdown-it-container 插件 (实现自定义容器) -->
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it-container@3.0.0/dist/markdown-it-container.min.js">
+    </script>
+    <!-- 引入 markdown-it-attrs 插件 (为元素添加属性) -->
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it-attrs@4.1.6/markdown-it-attrs.min.js">
+    </script>
+    <!-- 引入 highlight.js 用于代码高亮 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js">
+    </script>
+    <!-- 引入 Katex 用于 LaTeX 渲染 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js">
+    </script>
+    <!-- 引入 Katex 自动渲染扩展 -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js">
+    </script>
+    <style>
+        /* ===== CSS 变量 (浅色/深色主题) ===== */
+        :root {
+            --bg-body: #0d1117;
+            --bg-card: #161b22;
+            --bg-card-alt: #0d1117;
+            --bg-input: #21262d;
+            --border-color: #30363d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #c9d1d9;
+            --text-muted: #8b949e;
+            --text-dim: #484f58;
+            --accent: #58a6ff;
+            --accent-hover: #79c0ff;
+            --btn-green: #238636;
+            --btn-green-hover: #2ea043;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --avatar-shadow: 0 0 0 1px #30363d, 0 8px 24px rgba(0, 0, 0, 0.5);
+            --avatar-shadow-hover: 0 0 0 2px #58a6ff, 0 8px 28px rgba(0, 0, 0, 0.6);
+            --tab-active-bg: #21262d;
+            --tab-hover-bg: #1c2333;
+            --transition: 0.25s ease;
+            --card-radius: 16px;
+            --item-radius: 12px;
+            --editor-bg: #0d1117;
+            --editor-text: #c9d1d9;
+            --editor-border: #30363d;
+            /* 容器颜色 */
+            --container-info-bg: rgba(88, 166, 255, 0.12);
+            --container-info-border: #58a6ff;
+            --container-warning-bg: rgba(255, 184, 0, 0.12);
+            --container-warning-border: #d29922;
+            --container-danger-bg: rgba(248, 81, 73, 0.12);
+            --container-danger-border: #f85149;
+            --container-success-bg: rgba(46, 160, 67, 0.12);
+            --container-success-border: #2ea043;
+            --container-tip-bg: rgba(188, 140, 252, 0.12);
+            --container-tip-border: #bc8cfc;
+            /* 任务列表颜色 */
+            --task-checked-color: #2ea043;
+            --task-unchecked-color: var(--text-muted);
+            /* 代码高亮 */
+            --code-bg: #161b22;
+            --code-border: #30363d;
+            --code-text: #f0f6fc;
+        }
+
+        /* 浅色主题 */
+        [data-theme="light"] {
+            --bg-body: #f0f6fc;
+            --bg-card: #ffffff;
+            --bg-card-alt: #f6f8fa;
+            --bg-input: #e1e4e8;
+            --border-color: #d0d7de;
+            --text-primary: #24292f;
+            --text-secondary: #24292f;
+            --text-muted: #57606a;
+            --text-dim: #8b949e;
+            --accent: #0969da;
+            --accent-hover: #0550ae;
+            --btn-green: #2da44e;
+            --btn-green-hover: #2c974b;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --avatar-shadow: 0 0 0 1px #d0d7de, 0 8px 24px rgba(0, 0, 0, 0.06);
+            --avatar-shadow-hover: 0 0 0 2px #0969da, 0 8px 28px rgba(0, 0, 0, 0.1);
+            --tab-active-bg: #e1e4e8;
+            --tab-hover-bg: #d0d7de;
+            --editor-bg: #f6f8fa;
+            --editor-text: #24292f;
+            --editor-border: #d0d7de;
+            --container-info-bg: rgba(9, 105, 218, 0.08);
+            --container-info-border: #0969da;
+            --container-warning-bg: rgba(210, 153, 34, 0.08);
+            --container-warning-border: #d29922;
+            --container-danger-bg: rgba(248, 81, 73, 0.08);
+            --container-danger-border: #f85149;
+            --container-success-bg: rgba(46, 160, 67, 0.08);
+            --container-success-border: #2ea043;
+            --container-tip-bg: rgba(130, 80, 223, 0.08);
+            --container-tip-border: #8250df;
+            --task-checked-color: #2da44e;
+            --task-unchecked-color: #57606a;
+            --code-bg: #f6f8fa;
+            --code-border: #d0d7de;
+            --code-text: #24292f;
+        }
+
+        /* ===== 全局重置 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-body);
+            font-family: 'Segoe UI', 'PingFang SC', Roboto, system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 24px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            transition: background var(--transition), color var(--transition);
+            padding-top: 32px;
+        }
+
+        .card {
+            max-width: 900px;
+            width: 100%;
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 28px 30px 38px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+        }
+
+        /* ===== 顶部选项卡 ===== */
+        .tab-bar {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            transition: border-color var(--transition);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            letter-spacing: 0.3px;
+        }
+
+            .tab-btn:hover {
+                color: var(--text-primary);
+                background: var(--tab-hover-bg);
+            }
+
+            .tab-btn.active {
+                color: var(--text-primary);
+                background: var(--tab-active-bg);
+                color: var(--accent);
+            }
+
+            .tab-btn i {
+                margin-right: 6px;
+            }
+
+        .tab-content {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+            .tab-content.hidden {
+                display: none;
+            }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0.6;
+                transform: translateY(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== 头像 + 头部 ===== */
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--border-color);
+            padding: 3px;
+            margin-bottom: 14px;
+            box-shadow: var(--avatar-shadow);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .avatar-wrapper:hover {
+                transform: scale(1.02);
+                box-shadow: var(--avatar-shadow-hover);
+            }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 52px;
+            font-weight: 400;
+            color: var(--text-muted);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="40" r="26" fill="%23303b4b"/><circle cx="50" cy="40" r="22" fill="%234a5a72"/><circle cx="38" cy="35" r="4" fill="%237a8ba8"/><circle cx="62" cy="35" r="4" fill="%237a8ba8"/><path d="M38 52 Q50 62 62 52" stroke="%23d4777a" stroke-width="4" fill="none" stroke-linecap="round"/></svg>');
+            background-size: 70%;
+            background-position: center 55%;
+            background-repeat: no-repeat;
+            background-color: var(--bg-card-alt);
+            transition: background var(--transition), background-color var(--transition);
+        }
+
+        .display-name {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            color: var(--text-primary);
+            margin-top: 2px;
+            transition: color var(--transition);
+        }
+
+        .badge-title {
+            font-size: 0.9rem;
+            background: var(--bg-input);
+            padding: 6px 20px;
+            border-radius: 60px;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-weight: 400;
+            letter-spacing: 0.3px;
+            display: inline-block;
+            margin-top: 6px;
+            transition: background var(--transition), border-color var(--transition), color var(--transition);
+        }
+
+            .badge-title i {
+                color: var(--accent);
+                margin-right: 6px;
+                transition: color var(--transition);
+            }
+
+        /* ===== 个人简介 ===== */
+        .bio {
+            background: var(--bg-card-alt);
+            border-radius: var(--card-radius);
+            padding: 18px 22px;
+            margin: 16px 0 20px 0;
+            border-left: 4px solid var(--accent);
+            border: 1px solid var(--border-color);
+            border-left-width: 4px;
+            transition: background var(--transition), border-color var(--transition);
+        }
+
+            .bio p {
+                color: var(--text-secondary);
+                font-size: 1rem;
+                font-weight: 350;
+                transition: color var(--transition);
+            }
+
+            .bio i {
+                color: var(--accent);
+                margin-right: 10px;
+                font-size: 1rem;
+                opacity: 0.7;
+                transition: color var(--transition);
+            }
+
+        /* ===== 社交链接 ===== */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px 18px;
+            margin: 20px 0 8px;
+        }
+
+        .social-item {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            padding: 6px 16px 6px 14px;
+            border-radius: 40px;
+            background: var(--bg-card-alt);
+            border: 1px solid var(--border-color);
+            transition: all 0.15s;
+        }
+
+            .social-item i {
+                font-size: 1.2rem;
+                width: 22px;
+                text-align: center;
+                color: var(--text-muted);
+                transition: color 0.15s;
+            }
+
+            .social-item:hover {
+                color: var(--text-primary);
+                background: var(--bg-input);
+                border-color: var(--accent);
+                transform: translateY(-2px);
+            }
+
+                .social-item:hover i {
+                    color: var(--accent);
+                }
+
+        /* ===== 游戏下载卡片 ===== */
+        .game-section {
+            background: var(--bg-card-alt);
+            border-radius: 20px;
+            padding: 20px 20px 24px;
+            margin: 20px 0 20px;
+            border: 1px solid var(--border-color);
+            transition: background var(--transition), border-color var(--transition);
+        }
+
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-muted);
+            font-weight: 400;
+            letter-spacing: 0.4px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            transition: color var(--transition), border-color var(--transition);
+        }
+
+            .section-label i {
+                font-size: 1.2rem;
+                color: var(--accent);
+                transition: color var(--transition);
+            }
+
+        .game-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .game-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-card);
+            border-radius: 60px;
+            padding: 6px 6px 6px 18px;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+        }
+
+            .game-item:hover {
+                background: var(--tab-hover-bg);
+                border-color: var(--accent);
+                transform: scale(1.01);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+        .game-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .game-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-input);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--accent);
+            border: 1px solid var(--border-color);
+            transition: background var(--transition), border-color var(--transition), color var(--transition);
+        }
+
+        .game-title {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 1rem;
+            letter-spacing: -0.2px;
+            transition: color var(--transition);
+        }
+
+        .game-version {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 350;
+            margin-left: 6px;
+            background: var(--bg-card-alt);
+            padding: 0 12px;
+            border-radius: 30px;
+            border: 1px solid var(--border-color);
+            transition: background var(--transition), border-color var(--transition), color var(--transition);
+        }
+
+        .download-btn {
+            background: var(--btn-green);
+            border: none;
+            color: white;
+            font-weight: 500;
+            padding: 8px 22px;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            border: 1px solid var(--btn-green);
+        }
+
+            .download-btn:hover {
+                background: var(--btn-green-hover);
+                transform: scale(1.02);
+                box-shadow: 0 4px 16px rgba(46, 160, 67, 0.25);
+            }
+
+        .download-hint {
+            margin-top: 16px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+            transition: color var(--transition), border-color var(--transition);
+        }
+
+            .download-hint i {
+                color: var(--accent);
+                margin-right: 4px;
+                transition: color var(--transition);
+            }
+
+        /* ===== Discord 群组卡片 ===== */
+        .discord-section {
+            background: var(--bg-card-alt);
+            border-radius: 20px;
+            padding: 18px 20px 20px;
+            margin: 20px 0 20px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: background var(--transition), border-color var(--transition);
+        }
+
+            .discord-section .section-label {
+                justify-content: center;
+                border-bottom: none;
+                margin-bottom: 10px;
+                padding-bottom: 0;
+            }
+
+        .discord-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #5865F2;
+            color: white;
+            padding: 10px 32px;
+            border-radius: 60px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.2s;
+            border: 1px solid #5865F2;
+        }
+
+            .discord-btn:hover {
+                background: #4752c4;
+                transform: scale(1.02);
+                box-shadow: 0 4px 16px rgba(88, 101, 242, 0.3);
+            }
+
+        /* ===== 视频列表样式 ===== */
+        .video-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 8px;
+        }
+
+        .video-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: var(--bg-card-alt);
+            border: 1px solid var(--border-color);
+            border-radius: var(--item-radius);
+            padding: 12px 16px;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+            .video-item:hover {
+                border-color: var(--accent);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                transform: translateY(-2px);
+            }
+
+        .video-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .video-item-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1.05rem;
+            margin-bottom: 4px;
+            transition: color var(--transition);
+        }
+
+        .video-item-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+            .video-item-meta i {
+                margin-right: 4px;
+                color: var(--accent);
+            }
+
+        .video-cover {
+            flex-shrink: 0;
+            width: 160px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+        }
+
+            .video-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.2s;
+            }
+
+        .video-item:hover .video-cover img {
+            transform: scale(1.03);
+        }
+
+        /* ===== 炫彩跳转按钮 ===== */
+        .more-btn-wrapper {
+            text-align: center;
+            margin-top: 28px;
+            margin-bottom: 8px;
+        }
+
+        .more-btn {
+            display: inline-block;
+            padding: 12px 36px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            border-radius: 60px;
+            text-decoration: none;
+            color: #fff;
+            background: linear-gradient(135deg, #fb7299, #ff6b9d, #c084fc, #60a5fa, #34d399);
+            background-size: 300% 300%;
+            animation: gradientMove 4s ease infinite;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.25s, box-shadow 0.25s;
+            box-shadow: 0 4px 20px rgba(251, 114, 153, 0.3);
+            font-family: inherit;
+            letter-spacing: 0.5px;
+        }
+
+            .more-btn:hover {
+                transform: scale(1.05);
+                box-shadow: 0 8px 32px rgba(251, 114, 153, 0.45);
+            }
+
+            .more-btn:active {
+                transform: scale(0.96);
+            }
+
+            .more-btn i {
+                margin-right: 10px;
+            }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* ===== 专栏 - 文章列表 ===== */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .post-item {
+            background: var(--bg-card-alt);
+            border: 1px solid var(--border-color);
+            border-radius: var(--item-radius);
+            padding: 16px 20px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+            .post-item:hover {
+                border-color: var(--accent);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+        .post-item-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+            .post-item-title a {
+                color: var(--accent);
+                text-decoration: none;
+            }
+
+                .post-item-title a:hover {
+                    color: var(--accent-hover);
+                    text-decoration: underline;
+                }
+
+        .post-item-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+            .post-item-meta i {
+                margin-right: 4px;
+                color: var(--accent);
+            }
+
+            .post-item-meta .action-btn {
+                background: transparent;
+                border: none;
+                color: var(--text-muted);
+                cursor: pointer;
+                padding: 2px 8px;
+                border-radius: 4px;
+                font-size: 0.8rem;
+                transition: all 0.2s;
+                font-family: inherit;
+            }
+
+                .post-item-meta .action-btn:hover {
+                    color: var(--accent);
+                    background: var(--bg-input);
+                }
+
+                .post-item-meta .action-btn.danger:hover {
+                    color: #f85149;
+                }
+
+        .post-item-body {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+            .post-item-body p {
+                margin-bottom: 0.5em;
+            }
+
+            .post-item-body img {
+                max-width: 100%;
+                border-radius: 6px;
+            }
+
+            .post-item-body .katex-display {
+                margin: 0.5em 0;
+            }
+
+            /* ===== 代码高亮样式 ===== */
+            .post-item-body pre {
+                background: var(--code-bg) !important;
+                border: 1px solid var(--code-border);
+                border-radius: 8px;
+                padding: 12px 16px;
+                overflow-x: auto;
+                margin: 12px 0;
+                position: relative;
+            }
+
+                .post-item-body pre code {
+                    font-family: 'Consolas', 'Courier New', monospace;
+                    font-size: 0.9rem;
+                    line-height: 1.6;
+                    color: var(--code-text);
+                    background: transparent !important;
+                    padding: 0;
+                }
+
+            .post-item-body code {
+                font-family: 'Consolas', 'Courier New', monospace;
+                font-size: 0.85rem;
+                background: var(--bg-input);
+                padding: 2px 6px;
+                border-radius: 4px;
+                color: var(--text-secondary);
+            }
+
+            /* 代码块语言标签 */
+            .post-item-body pre .code-lang {
+                position: absolute;
+                top: 8px;
+                right: 12px;
+                font-size: 0.7rem;
+                color: var(--text-muted);
+                background: var(--bg-input);
+                padding: 2px 10px;
+                border-radius: 4px;
+                opacity: 0.7;
+                font-family: inherit;
+            }
+
+        /* 高亮主题适配浅色 */
+        [data-theme="light"] .post-item-body pre code.hljs {
+            background: #f6f8fa !important;
+        }
+
+        /* ===== 交互式任务列表样式 ===== */
+        .post-item-body .task-list-item {
+            list-style: none;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 4px 0;
+            cursor: pointer;
+            transition: opacity 0.15s;
+        }
+
+            .post-item-body .task-list-item:hover {
+                opacity: 0.8;
+            }
+
+            .post-item-body .task-list-item .task-checkbox {
+                flex-shrink: 0;
+                width: 20px;
+                height: 20px;
+                margin-top: 2px;
+                border: 2px solid var(--border-color);
+                border-radius: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s;
+                cursor: pointer;
+                background: var(--bg-card-alt);
+                color: var(--task-checked-color);
+                font-size: 13px;
+                user-select: none;
+            }
+
+                .post-item-body .task-list-item .task-checkbox.checked {
+                    background: var(--task-checked-color);
+                    border-color: var(--task-checked-color);
+                    color: white;
+                }
+
+                    .post-item-body .task-list-item .task-checkbox.checked i {
+                        display: block;
+                    }
+
+                .post-item-body .task-list-item .task-checkbox i {
+                    display: none;
+                }
+
+            .post-item-body .task-list-item .task-text {
+                flex: 1;
+                color: var(--text-secondary);
+                transition: color 0.2s, text-decoration 0.2s;
+                word-break: break-word;
+            }
+
+                .post-item-body .task-list-item .task-text.done {
+                    text-decoration: line-through;
+                    color: var(--text-muted);
+                }
+
+        /* ===== Markdown 容器样式 (不可折叠) ===== */
+        .post-item-body .container {
+            padding: 12px 16px;
+            margin: 12px 0;
+            border-radius: 8px;
+            border-left: 4px solid;
+            background: var(--bg-card-alt);
+        }
+
+        .post-item-body .container-info {
+            background: var(--container-info-bg);
+            border-left-color: var(--container-info-border);
+        }
+
+        .post-item-body .container-warning {
+            background: var(--container-warning-bg);
+            border-left-color: var(--container-warning-border);
+        }
+
+        .post-item-body .container-danger {
+            background: var(--container-danger-bg);
+            border-left-color: var(--container-danger-border);
+        }
+
+        .post-item-body .container-success {
+            background: var(--container-success-bg);
+            border-left-color: var(--container-success-border);
+        }
+
+        .post-item-body .container-tip {
+            background: var(--container-tip-bg);
+            border-left-color: var(--container-tip-border);
+        }
+
+        .post-item-body .container-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .post-item-body .container-title i {
+                font-size: 1rem;
+            }
+
+            .post-item-body .container-title a {
+                color: var(--accent);
+                text-decoration: none;
+            }
+
+                .post-item-body .container-title a:hover {
+                    color: var(--accent-hover);
+                    text-decoration: underline;
+                }
+
+        /* ===== 专栏 - 编辑器 ===== */
+        .editor-container {
+            background: var(--bg-card-alt);
+            border: 1px solid var(--border-color);
+            border-radius: var(--card-radius);
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+            .editor-container .form-group {
+                margin-bottom: 16px;
+            }
+
+            .editor-container label {
+                display: block;
+                font-weight: 500;
+                color: var(--text-primary);
+                margin-bottom: 4px;
+                font-size: 0.9rem;
+            }
+
+            .editor-container input[type="text"],
+            .editor-container textarea {
+                width: 100%;
+                padding: 10px 14px;
+                background: var(--editor-bg);
+                color: var(--editor-text);
+                border: 1px solid var(--editor-border);
+                border-radius: 8px;
+                font-size: 0.95rem;
+                font-family: inherit;
+                transition: border-color 0.2s;
+            }
+
+                .editor-container input[type="text"]:focus,
+                .editor-container textarea:focus {
+                    outline: none;
+                    border-color: var(--accent);
+                }
+
+            .editor-container textarea {
+                min-height: 180px;
+                resize: vertical;
+                font-family: 'Consolas', 'Courier New', monospace;
+                line-height: 1.6;
+            }
+
+        .editor-date-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+            .editor-date-row input[type="date"] {
+                padding: 8px 14px;
+                background: var(--editor-bg);
+                color: var(--editor-text);
+                border: 1px solid var(--editor-border);
+                border-radius: 8px;
+                font-size: 0.9rem;
+                font-family: inherit;
+            }
+
+                .editor-date-row input[type="date"]:focus {
+                    outline: none;
+                    border-color: var(--accent);
+                }
+
+        .date-quick-btn {
+            padding: 6px 16px;
+            background: var(--bg-input);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+            .date-quick-btn:hover {
+                border-color: var(--accent);
+                color: var(--text-primary);
+            }
+
+        .editor-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-save {
+            padding: 10px 32px;
+            background: var(--btn-green);
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+            .btn-save:hover {
+                background: var(--btn-green-hover);
+                transform: scale(1.02);
+            }
+
+        .btn-cancel {
+            padding: 10px 28px;
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 60px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+            .btn-cancel:hover {
+                border-color: var(--accent);
+                color: var(--text-primary);
+            }
+
+        /* ===== 文章详情页 ===== */
+        .post-detail {
+            padding: 8px 0;
+        }
+
+            .post-detail .post-item-title {
+                font-size: 1.8rem;
+                margin-bottom: 8px;
+            }
+
+                .post-detail .post-item-title a {
+                    color: var(--accent);
+                    text-decoration: none;
+                }
+
+                    .post-detail .post-item-title a:hover {
+                        color: var(--accent-hover);
+                        text-decoration: underline;
+                    }
+
+            .post-detail .post-item-meta {
+                margin-bottom: 16px;
+            }
+
+            .post-detail .post-item-body {
+                -webkit-line-clamp: unset;
+                overflow: visible;
+                font-size: 1rem;
+            }
+
+                .post-detail .post-item-body p {
+                    margin-bottom: 1em;
+                }
+
+        /* ===== 返回按钮（固定左下角，类似主题切换） ===== */
+        .back-btn-fixed {
+            position: fixed;
+            bottom: 28px;
+            left: 28px;
+            z-index: 999;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 60px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.25s;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: none;
+        }
+
+            .back-btn-fixed:hover {
+                transform: scale(1.04);
+                border-color: var(--accent);
+            }
+
+            .back-btn-fixed i {
+                font-size: 1.2rem;
+                color: var(--accent);
+            }
+
+        /* ===== 新建文章链接（纯文字） ===== */
+        .new-post-link {
+            color: var(--accent);
+            cursor: pointer;
+            font-weight: 500;
+            transition: color 0.2s;
+            font-size: 0.85rem;
+            text-decoration: none;
+            background: none;
+            border: none;
+            font-family: inherit;
+            padding: 0;
+        }
+
+            .new-post-link:hover {
+                color: var(--accent-hover);
+                text-decoration: underline;
+            }
+
+        /* ===== 退出管理员按钮 ===== */
+        .exit-admin-btn {
+            display: none;
+            margin-top: 16px;
+            padding: 8px 24px;
+            background: var(--bg-input);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            font-family: inherit;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+            .exit-admin-btn:hover {
+                border-color: var(--accent);
+                color: var(--text-primary);
+                background: var(--tab-hover-bg);
+            }
+
+        /* ===== 页脚 ===== */
+        .footer-note {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 24px;
+            letter-spacing: 0.3px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 18px;
+            transition: color var(--transition), border-color var(--transition);
+        }
+
+            .footer-note i {
+                color: var(--accent);
+                margin: 0 4px;
+                transition: color var(--transition);
+            }
+
+        /* ===== 右下角主题切换 ===== */
+        .theme-toggle {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 999;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 60px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.25s;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+            .theme-toggle:hover {
+                transform: scale(1.04);
+                border-color: var(--accent);
+            }
+
+            .theme-toggle i {
+                font-size: 1.2rem;
+                color: var(--accent);
+            }
+
+        /* ===== 加载状态 ===== */
+        .loading-spinner {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--text-muted);
+        }
+
+            .loading-spinner i {
+                font-size: 1.8rem;
+                margin-bottom: 10px;
+                display: block;
+                color: var(--accent);
+            }
+
+        .feed-empty {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px 20px;
+            font-size: 0.95rem;
+        }
+
+            .feed-empty i {
+                font-size: 2rem;
+                display: block;
+                margin-bottom: 12px;
+                color: var(--border-color);
+            }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 600px) {
+            .card {
+                padding: 18px 14px 24px;
+                border-radius: 20px;
+            }
+
+            .game-item {
+                flex-wrap: wrap;
+                padding: 12px 14px;
+                border-radius: 24px;
+                gap: 10px;
+            }
+
+            .game-info {
+                width: 100%;
+            }
+
+            .download-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 10px;
+            }
+
+            .display-name {
+                font-size: 1.8rem;
+            }
+
+            .avatar-wrapper {
+                width: 100px;
+                height: 100px;
+            }
+
+            .social-links {
+                gap: 10px;
+            }
+
+            .social-item {
+                font-size: 0.8rem;
+                padding: 4px 12px 4px 10px;
+            }
+
+            .tab-btn {
+                font-size: 0.8rem;
+                padding: 6px 14px;
+            }
+
+            .theme-toggle {
+                bottom: 16px;
+                right: 16px;
+                padding: 8px 14px;
+                font-size: 0.75rem;
+            }
+
+            .back-btn-fixed {
+                bottom: 16px;
+                left: 16px;
+                padding: 8px 14px;
+                font-size: 0.75rem;
+            }
+
+            .discord-btn {
+                padding: 8px 24px;
+                font-size: 0.9rem;
+            }
+
+            .more-btn {
+                padding: 10px 24px;
+                font-size: 0.95rem;
+            }
+
+            .video-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+                padding: 14px;
+            }
+
+            .video-cover {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 16 / 9;
+            }
+
+            .editor-date-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .editor-actions {
+                flex-direction: column;
+            }
+
+                .editor-actions .btn-save,
+                .editor-actions .btn-cancel {
+                    width: 100%;
+                    text-align: center;
+                    justify-content: center;
+                }
+
+            .post-detail .post-item-title {
+                font-size: 1.4rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .game-title {
+                font-size: 0.9rem;
+            }
+
+            .badge-title {
+                font-size: 0.75rem;
+                padding: 4px 14px;
+            }
+
+            .more-btn {
+                padding: 8px 18px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== 右下角主题切换 ===== -->
+    <button class="theme-toggle" id="themeToggle" title="切换浅色/深色主题">
+        <i class="fas fa-moon" id="themeIcon"></i>
+        <span id="themeLabel">深色</span>
+    </button>
+
+    <!-- ===== 左下角返回按钮（固定，详情页显示） ===== -->
+    <button class="back-btn-fixed" id="backBtnFixed" onclick="showPostList()">
+        <i class="fas fa-arrow-left"></i>
+        <span id="backBtnLabel">返回列表</span>
+    </button>
+
+    <!-- ===== 主卡片 ===== -->
+    <div class="card">
+
+        <!-- ===== 顶部选项卡 ===== -->
+        <div class="tab-bar">
+            <button class="tab-btn active" data-tab="home"><i class="fas fa-home"></i> 首页</button>
+            <button class="tab-btn" data-tab="games"><i class="fas fa-gamepad"></i> 游戏</button>
+            <button class="tab-btn" data-tab="videos"><i class="fas fa-video"></i> 视频</button>
+            <button class="tab-btn" data-tab="posts"><i class="fas fa-newspaper"></i> 专栏</button>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 选项卡：首页 -->
+        <!-- ========================================================= -->
+        <div id="tab-home" class="tab-content">
+            <div class="profile-header">
+                <div class="avatar-wrapper" id="avatarWrapper" title="双击头像进入管理员模式 · 单击上传头像">
+                    <div class="avatar" id="avatarDisplay" aria-label="开发者头像"></div>
+                </div>
+                <div class="display-name">zhedaotixuanbo</div>
+                <div class="badge-title">
+                    <i class="fas fa-code"></i> 来自中原一群伙伴，结庐第二省河南实验中学
+                </div>
+            </div>
+            <div class="bio">
+                <p>
+                    <i class="fas fa-quote-left"></i>
+                    欢迎来到 zhedaotixuanbo 的个人主页。<br>
+                    至理格言：遇到单选不会题，无脑选啵最无敌！
+                </p>
+            </div>
+            <div class="social-links">
+                <a href="https://space.bilibili.com/494925416" class="social-item" target="_blank">
+                    <i class="fab fa-bilibili"></i> B站 · 游戏日常
+                </a>
+                <a href="https://www.luogu.com.cn/user/1598037" class="social-item" target="_blank">
+                    <i class="fas fa-laptop-code"></i> 洛谷 · 程序交流
+                </a>
+                <a href="javascript:void(0)" class="social-item" onclick="copyEmail()">
+                    <i class="fas fa-envelope"></i> 邮箱 · 点击复制
+                </a>
+            </div>
+
+            <!-- 退出管理员模式按钮 -->
+            <div style="display:flex;justify-content:center;margin-top:20px;">
+                <button class="exit-admin-btn" id="exitAdminBtn" onclick="exitAdminMode()">
+                    <i class="fas fa-sign-out-alt"></i> 退出管理员模式
+                </button>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 选项卡：游戏（需要管理员权限） -->
+        <!-- ========================================================= -->
+        <div id="tab-games" class="tab-content hidden">
+            <div id="gamesContent">
+                <!-- 由 JavaScript 动态渲染 -->
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 选项卡：视频 -->
+        <!-- ========================================================= -->
+        <div id="tab-videos" class="tab-content hidden">
+            <div class="section-label">
+                <i class="fab fa-bilibili" style="color: #fb7299;"></i>
+                <span>B站 · 代表作列表</span>
+            </div>
+            <div id="videoContainer"></div>
+            <div class="more-btn-wrapper">
+                <a href="https://space.bilibili.com/494925416/upload/video" target="_blank" class="more-btn">
+                    <i class="fas fa-external-link-alt"></i> 更多精彩，前往主页查看
+                </a>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- 选项卡：专栏 -->
+        <!-- ========================================================= -->
+        <div id="tab-posts" class="tab-content hidden">
+            <div class="section-label">
+                <i class="fas fa-newspaper"></i>
+                <span id="postsSectionTitle">洛谷 · 文章列表</span>
+                <span style="margin-left: auto; font-size: 0.85rem; opacity: 0.8; color: var(--text-muted);">
+                    <button class="new-post-link" id="newPostBtn" onclick="showEditor()" style="display:none;">
+                        <i class="fas fa-plus" style="margin-right:4px;"></i>新建文章
+                    </button>
+                </span>
+            </div>
+
+            <!-- 文章列表 / 详情 容器 -->
+            <div id="postContainer">
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-pulse"></i>
+                    加载文章中...
+                </div>
+            </div>
+
+            <!-- 编辑器容器 (默认隐藏) -->
+            <div id="editorContainer" class="editor-container" style="display:none;">
+                <div class="form-group">
+                    <label for="postTitle">标题</label>
+                    <input type="text" id="postTitle" placeholder="输入文章标题...">
+                </div>
+                <div class="form-group">
+                    <label for="postBody">正文 (支持 Markdown / LaTeX / 任务列表 / 代码高亮)</label>
+                    <textarea id="postBody" placeholder="使用 Markdown 书写，支持 LaTeX 公式（如 $E=mc^2$），任务列表（- [ ] 任务 / - [x] 已完成），代码块（```语言 ... ```）"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>发布日期</label>
+                    <div class="editor-date-row">
+                        <input type="date" id="postDate">
+                        <button class="date-quick-btn" onclick="setTodayDate()"><i class="fas fa-calendar-day"></i> 今天</button>
+                    </div>
+                </div>
+                <div class="editor-actions">
+                    <button class="btn-save" onclick="savePost()"><i class="fas fa-save"></i> 保存文章</button>
+                    <button class="btn-cancel" onclick="cancelEdit()">取消</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 页脚 ===== -->
+        <div class="footer-note">
+            <i class="fas fa-wand-magic-sparkles"></i> 2026 <i class="fas fa-heart" style="color: #da3633; margin: 0 6px;"></i> zhedaotixuanbo
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 脚本区 -->
+    <!-- ============================================================ -->
+    <!-- 1. 邮箱复制 -->
+    <script>
+        function copyEmail() {
+            const email = 'zzmerto_0431@163.com';
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(email).then(() => {
+                    alert('✅ 邮箱已复制: ' + email);
+                }).catch(() => {
+                    fallbackCopy(email);
+                });
+            } else {
+                fallbackCopy(email);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                alert('✅ 邮箱已复制: ' + text);
+            } catch (err) {
+                alert('❌ 复制失败，请手动复制: ' + text);
+            }
+            document.body.removeChild(textarea);
+        }
+    </script>
+
+    <!-- ============================================================ -->
+    <!-- 2. 管理员验证系统 + GitHub 头像云端存储 -->
+    <!-- ============================================================ -->
+    <script>
+        const API_BASE = '/api/github';
+        const AUTH_KEY = 'admin_authenticated_session';
+
+        // ----- 管理员认证 -----
+        function isAdminAuthenticated() {
+            return sessionStorage.getItem(AUTH_KEY) === 'true';
+        }
+
+        function setAdminAuthenticated() {
+            sessionStorage.setItem(AUTH_KEY, 'true');
+            updateAdminUI();
+        }
+
+        function clearAdminAuth() {
+            sessionStorage.removeItem(AUTH_KEY);
+            fetch(`${API_BASE}?action=logout`, { method: 'POST' }).catch(() => { });
+            updateAdminUI();
+            renderGamesContent();
+            if (document.getElementById('postContainer') &&
+                !document.getElementById('tab-posts').classList.contains('hidden')) {
+                showPostList();
+            }
+        }
+
+        async function promptAdminPassword() {
+            const password = prompt('🔐 请输入管理员密码：');
+            if (password === null) return false;
+
+            const resp = await fetch(`${API_BASE}?action=verify`, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+
+            if (resp.ok) {
+                setAdminAuthenticated();
+                alert('✅ 已进入管理员模式');
+                return true;
+            } else {
+                alert('❌ 密码错误，请重试');
+                return false;
+            }
+        }
+
+        async function verifyAdmin(showAlert = true) {
+            if (isAdminAuthenticated()) return true;
+            const result = await promptAdminPassword();
+            if (!result && showAlert) {
+                alert('⚠️ 需要管理员权限才能执行此操作');
+            }
+            return result;
+        }
+
+        async function githubApi(action, options = {}) {
+            const method = options.method || 'GET';
+            const headers = { 'Accept': 'application/json' };
+            let body = options.body ? { ...options.body } : {};
+
+            if (method !== 'GET') {
+                headers['Content-Type'] = 'application/json';
+            }
+
+            const resp = await fetch(`${API_BASE}?action=${encodeURIComponent(action)}`, {
+                method,
+                headers,
+                credentials: 'same-origin',
+                body: method === 'GET' ? undefined : JSON.stringify(body)
+            });
+
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok) {
+                if (resp.status === 401) clearAdminAuth();
+                throw new Error(data.message || `请求失败: HTTP ${resp.status}`);
+            }
+            return data;
+        }
+
+        // ----- 更新管理员相关UI -----
+        function updateAdminUI() {
+            const isAdmin = isAdminAuthenticated();
+            const exitBtn = document.getElementById('exitAdminBtn');
+            const newPostBtn = document.getElementById('newPostBtn');
+
+            if (exitBtn) {
+                exitBtn.style.display = isAdmin ? 'inline-flex' : 'none';
+            }
+            if (newPostBtn) {
+                newPostBtn.style.display = isAdmin ? 'inline-flex' : 'none';
+            }
+        }
+
+        // ----- 退出管理员模式 -----
+        function exitAdminMode() {
+            if (confirm('确定要退出管理员模式吗？')) {
+                clearAdminAuth();
+                alert('✅ 已退出管理员模式');
+                renderGamesContent();
+                if (document.getElementById('postContainer') &&
+                    !document.getElementById('tab-posts').classList.contains('hidden')) {
+                    showPostList();
+                }
+            }
+        }
+
+        // ----- 从 GitHub Issue 读取头像 -----
+        async function fetchAvatarFromGitHub() {
+            try {
+                const data = await githubApi('avatar');
+                return data.avatarUrl || null;
+            } catch (err) {
+                console.warn('获取头像失败:', err);
+                return null;
+            }
+        }
+
+        // ----- 上传头像到 GitHub Issue -----
+        async function uploadAvatarToGitHub(imageDataUrl) {
+            if (!await verifyAdmin(true)) return false;
+            try {
+                await githubApi('uploadAvatar', {
+                    method: 'POST',
+                    admin: true,
+                    body: { imageDataUrl }
+                });
+                localStorage.setItem('userAvatar', imageDataUrl);
+                return true;
+            } catch (err) {
+                console.error('上传头像失败:', err);
+                alert('❌ 上传头像失败: ' + err.message);
+                return false;
+            }
+        }
+
+        // ----- 加载头像 -----
+        async function loadAvatar() {
+            const avatarEl = document.getElementById('avatarDisplay');
+            const cached = localStorage.getItem('userAvatar');
+            if (cached && cached.startsWith('data:image')) {
+                avatarEl.style.backgroundImage = 'url(' + cached + ')';
+                avatarEl.style.backgroundSize = 'cover';
+                avatarEl.style.backgroundPosition = 'center';
+                avatarEl.style.backgroundColor = 'transparent';
+                avatarEl.innerText = '';
+                try {
+                    const cloudAvatar = await fetchAvatarFromGitHub();
+                    if (cloudAvatar && cloudAvatar !== cached) {
+                        localStorage.setItem('userAvatar', cloudAvatar);
+                        avatarEl.style.backgroundImage = 'url(' + cloudAvatar + ')';
+                        avatarEl.style.backgroundSize = 'cover';
+                        avatarEl.style.backgroundPosition = 'center';
+                        avatarEl.style.backgroundColor = 'transparent';
+                        avatarEl.innerText = '';
+                    }
+                } catch (e) { /* 静默失败 */ }
+                return;
+            }
+
+            try {
+                const cloudAvatar = await fetchAvatarFromGitHub();
+                if (cloudAvatar) {
+                    localStorage.setItem('userAvatar', cloudAvatar);
+                    avatarEl.style.backgroundImage = 'url(' + cloudAvatar + ')';
+                    avatarEl.style.backgroundSize = 'cover';
+                    avatarEl.style.backgroundPosition = 'center';
+                    avatarEl.style.backgroundColor = 'transparent';
+                    avatarEl.innerText = '';
+                }
+            } catch (err) {
+                console.warn('加载头像失败:', err);
+            }
+        }
+
+        // ----- 头像交互 -----
+        function setupAvatarInteraction() {
+            const wrapper = document.getElementById('avatarWrapper');
+            const avatarEl = document.getElementById('avatarDisplay');
+
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.style.display = 'none';
+            document.body.appendChild(fileInput);
+
+            fileInput.addEventListener('change', async function (e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (!isAdminAuthenticated()) {
+                    alert('⚠️ 需要管理员权限才能更换头像');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = async function (ev) {
+                    const imageData = ev.target.result;
+                    const success = await uploadAvatarToGitHub(imageData);
+                    if (success) {
+                        avatarEl.style.backgroundImage = 'url(' + imageData + ')';
+                        avatarEl.style.backgroundSize = 'cover';
+                        avatarEl.style.backgroundPosition = 'center';
+                        avatarEl.style.backgroundColor = 'transparent';
+                        avatarEl.innerText = '';
+                        alert('✅ 头像已更新并同步到云端');
+                    }
+                };
+                reader.readAsDataURL(file);
+                fileInput.value = '';
+            });
+
+            let clickCount = 0;
+            let clickTimer = null;
+
+            wrapper.addEventListener('click', async function (e) {
+                clickCount++;
+                if (clickCount === 1) {
+                    clickTimer = setTimeout(() => {
+                        clickCount = 0;
+                    }, 400);
+                } else if (clickCount === 2) {
+                    clearTimeout(clickTimer);
+                    clickCount = 0;
+                    if (!isAdminAuthenticated()) {
+                        await promptAdminPassword();
+                        updateAdminUI();
+                        renderGamesContent();
+                        if (document.getElementById('postContainer') &&
+                            !document.getElementById('tab-posts').classList.contains('hidden')) {
+                            showPostList();
+                        }
+                    } else {
+                        alert('ℹ️ 当前已是管理员模式');
+                    }
+                }
+            });
+
+            wrapper.addEventListener('click', function (e) {
+                setTimeout(() => {
+                    if (clickCount <= 1 && isAdminAuthenticated()) {
+                        fileInput.click();
+                    }
+                }, 50);
+            });
+        }
+
+        window.addEventListener('load', function () {
+            loadAvatar();
+            setupAvatarInteraction();
+            updateAdminUI();
+
+            const activeTab = document.querySelector('.tab-btn.active');
+            if (activeTab && activeTab.dataset.tab === 'games') {
+                renderGamesContent();
+            }
+            if (activeTab && activeTab.dataset.tab === 'posts') {
+                showPostList();
+            }
+        });
+
+        window.exitAdminMode = exitAdminMode;
+    </script>
+
+    <!-- 3. 选项卡切换 -->
+    <script>
+        (function () {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const contents = {
+                home: document.getElementById('tab-home'),
+                games: document.getElementById('tab-games'),
+                videos: document.getElementById('tab-videos'),
+                posts: document.getElementById('tab-posts')
+            };
+            const backBtn = document.getElementById('backBtnFixed');
+
+            tabs.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    tabs.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const tabName = this.dataset.tab;
+                    Object.keys(contents).forEach(key => {
+                        contents[key].classList.toggle('hidden', key !== tabName);
+                    });
+
+                    if (backBtn) backBtn.style.display = 'none';
+
+                    if (tabName === 'videos') renderVideoList();
+                    if (tabName === 'posts') {
+                        showPostList();
+                        updateAdminUI();
+                    }
+                    if (tabName === 'games') {
+                        renderGamesContent();
+                    }
+                });
+            });
+        })();
+    </script>
+
+    <!-- 4. 主题切换 -->
+    <script>
+        (function () {
+            const toggleBtn = document.getElementById('themeToggle');
+            const icon = document.getElementById('themeIcon');
+            const label = document.getElementById('themeLabel');
+
+            const savedTheme = localStorage.getItem('userTheme') || 'dark';
+            applyTheme(savedTheme);
+
+            toggleBtn.addEventListener('click', function () {
+                const current = document.documentElement.getAttribute('data-theme');
+                const next = (current === 'dark') ? 'light' : 'dark';
+                applyTheme(next);
+                localStorage.setItem('userTheme', next);
+            });
+
+            function applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                if (theme === 'dark') {
+                    icon.className = 'fas fa-moon';
+                    label.textContent = '深色';
+                } else {
+                    icon.className = 'fas fa-sun';
+                    label.textContent = '浅色';
+                }
+            }
+        })();
+    </script>
+
+    <!-- ============================================================ -->
+    <!-- 5. 视频列表 -->
+    <!-- ============================================================ -->
+    <script>
+        const VIDEO_LIST = [
+            { title: '【Roblox 阳光群岛】不是？你告诉我涂装是这么设计的？', cover: 'https://i0.hdslb.com/bfs/archive/259d7877b761f87aa84d958eae6d47ebb0eb5ebe.jpg', date: '2024-08-10', link: 'https://www.bilibili.com/video/BV1j4YLejEyG' },
+            { title: '【Roblox 阳光群岛】2.0更新后成就全收集！疯狂卷走所有阳光币！', cover: 'https://i0.hdslb.com/bfs/archive/6e8eb3da558fd9d32f6fff00cf21ef0581f459d1.jpg', date: '2024-07-09', link: 'https://www.bilibili.com/video/BV1o9avevEVh' },
+            { title: '【Roblox 阳光群岛】鸽了快一年，继续来填坑！宇通&大巴涂装制作（建议搭配上期一起食用）', cover: 'https://i0.hdslb.com/bfs/archive/490c4426f8026a8c5158c0a3ab2d0af2edf4ee96.jpg', date: '2025-07-04', link: 'https://www.bilibili.com/video/BV1Y43JzdEVS' }
+        ];
+
+        function renderVideoList() {
+            const container = document.getElementById('videoContainer');
+            if (!VIDEO_LIST || VIDEO_LIST.length === 0) {
+                container.innerHTML = `<div class="feed-empty"><i class="fas fa-film"></i>暂无视频</div>`;
+                return;
+            }
+            const sorted = [...VIDEO_LIST].sort((a, b) => new Date(b.date) - new Date(a.date));
+            let html = '<div class="video-grid">';
+            sorted.forEach(v => {
+                html += `
+                                    <a href="${v.link}" target="_blank" class="video-item">
+                                        <div class="video-info">
+                                            <div class="video-item-title">${escapeHtml(v.title)}</div>
+                                            <div class="video-item-meta"><span><i class="fas fa-calendar-alt"></i> ${v.date}</span></div>
+                                        </div>
+                                        <div class="video-cover"><img src="${v.cover}" alt="${escapeHtml(v.title)}" loading="lazy" onerror="this.style.display='none'"></div>
+                                    </a>
+                                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        window.renderVideoList = renderVideoList;
+    </script>
+
+    <!-- ============================================================ -->
+    <!-- 6. 游戏栏目（需要管理员权限） -->
+    <!-- ============================================================ -->
+    <script>
+        function renderGamesContent() {
+            const container = document.getElementById('gamesContent');
+            if (isAdminAuthenticated()) {
+                container.innerHTML = `
+                                <div class="game-section">
+                                    <div class="section-label">
+                                        <i class="fas fa-download"></i>
+                                        <span>游戏下载</span>
+                                        <span style="margin-left: auto; font-size: 0.65rem; opacity: 0.6; color: var(--text-muted);">v2.1.0</span>
+                                    </div>
+                                    <div class="game-grid">
+                                        <div class="game-item">
+                                            <div class="game-info">
+                                                <div class="game-icon"><i class="fas fa-bus"></i></div>
+                                                <div>
+                                                    <span class="game-title">郑州公交模拟器</span>
+                                                    <span class="game-version">Win / Android</span>
+                                                </div>
+                                            </div>
+                                            <a href="https://game.example.com/zhengzhou-bus.zip" class="download-btn" target="_blank">
+                                                <i class="fas fa-download"></i> 下载
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="download-hint">
+                                        <span><i class="fas fa-check-circle"></i> 真实驾驶体验</span>
+                                        <span><i class="fas fa-shield-alt"></i> 安全 · 绿色下载</span>
+                                    </div>
+                                </div>
+                                <div class="discord-section">
+                                    <div class="section-label">
+                                        <i class="fab fa-discord" style="color: #5865F2;"></i>
+                                        <span>加入社区</span>
+                                    </div>
+                                    <a href="https://discord.gg/ubvkcZ36G" class="discord-btn" target="_blank">
+                                        <i class="fab fa-discord"></i> 加入 Discord 群组
+                                    </a>
+                                </div>
+                            `;
+            } else {
+                container.innerHTML = `
+                                <div class="feed-empty" style="padding:60px 20px;">
+                                    <i class="fas fa-lock" style="font-size:3rem;display:block;margin-bottom:16px;color:var(--border-color);"></i>
+                                    <div style="font-size:1.2rem;font-weight:500;margin-bottom:8px;">敬请期待</div>
+                                    <div style="font-size:0.9rem;color:var(--text-muted);">更多游戏内容即将上线</div>
+                                </div>
+                            `;
+            }
+        }
+
+        window.renderGamesContent = renderGamesContent;
+    </script>
+
+    <!-- ============================================================ -->
+    <!-- 7. 专栏系统 -->
+    <!-- ============================================================ -->
+    <script>
+        // ============================================================
+        // 辅助函数：渲染 Markdown 链接 (用于容器标题)
+        // ============================================================
+        function renderInlineMarkdown(text) {
+            if (!text) return text;
+            return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function (match, linkText, linkUrl) {
+                return `<a href="${linkUrl}" target="_blank">${linkText}</a>`;
+            });
+        }
+
+        // ============================================================
+        // 任务列表渲染 (交互式)
+        // ============================================================
+        function renderTaskList(content) {
+            if (!content) return content;
+
+            const lines = content.split('\n');
+            let result = [];
+            let inTaskList = false;
+
+            for (let line of lines) {
+                const uncheckedMatch = line.match(/^-\s*\[\s*\]\s+(.*)$/);
+                const checkedMatch = line.match(/^-\s*\[x\]\s+(.*)$/);
+
+                if (uncheckedMatch) {
+                    const text = uncheckedMatch[1].trim();
+                    result.push(
+                        `<div class="task-list-item" onclick="toggleTask(this)">
+                                                <span class="task-checkbox"><i class="fas fa-check"></i></span>
+                                                <span class="task-text">${escapeHtml(text)}</span>
+                                            </div>`
+                    );
+                    inTaskList = true;
+                } else if (checkedMatch) {
+                    const text = checkedMatch[1].trim();
+                    result.push(
+                        `<div class="task-list-item" onclick="toggleTask(this)">
+                                                <span class="task-checkbox checked"><i class="fas fa-check"></i></span>
+                                                <span class="task-text done">${escapeHtml(text)}</span>
+                                            </div>`
+                    );
+                    inTaskList = true;
+                } else {
+                    if (inTaskList && line.trim() === '') {
+                        inTaskList = false;
+                    }
+                    result.push(line);
+                }
+            }
+
+            return result.join('\n');
+        }
+
+        // ----- 切换任务状态 -----
+        window.toggleTask = function (el) {
+            const checkbox = el.querySelector('.task-checkbox');
+            const text = el.querySelector('.task-text');
+            if (checkbox) {
+                checkbox.classList.toggle('checked');
+                if (checkbox.classList.contains('checked')) {
+                    checkbox.innerHTML = '<i class="fas fa-check"></i>';
+                    text.classList.add('done');
+                } else {
+                    checkbox.innerHTML = '';
+                    text.classList.remove('done');
+                }
+            }
+        };
+
+        // ============================================================
+        // 预处理：保护 LaTeX 公式中的 $ 不被转义
+        // ============================================================
+        function protectLatex(content) {
+            if (!content) return content;
+
+            let result = content.replace(/\$\$([\s\S]*?)\$\$/g, function (match, formula) {
+                return `<span class="latex-protected-display" data-formula="${encodeURIComponent(formula)}">$$${formula}$$</span>`;
+            });
+
+            result = result.replace(/(?<!\\)\$([^\$\n]+?)(?<!\\)\$/g, function (match, formula) {
+                return `<span class="latex-protected-inline" data-formula="${encodeURIComponent(formula)}">$${formula}$</span>`;
+            });
+
+            return result;
+        }
+
+        // ----- 恢复并渲染 LaTeX 公式 -----
+        function restoreAndRenderLatex(container) {
+            const displaySpans = container.querySelectorAll('.latex-protected-display');
+            displaySpans.forEach(span => {
+                const formula = decodeURIComponent(span.dataset.formula);
+                try {
+                    katex.render(formula, span, {
+                        displayMode: true,
+                        throwOnError: false,
+                        trust: true
+                    });
+                    span.className = 'katex-display';
+                } catch (e) {
+                    console.warn('块级公式渲染失败:', e);
+                    span.textContent = '$$' + formula + '$$';
+                    span.className = 'latex-fallback';
+                }
+            });
+
+            const inlineSpans = container.querySelectorAll('.latex-protected-inline');
+            inlineSpans.forEach(span => {
+                const formula = decodeURIComponent(span.dataset.formula);
+                try {
+                    katex.render(formula, span, {
+                        displayMode: false,
+                        throwOnError: false,
+                        trust: true
+                    });
+                    span.className = 'katex-inline';
+                } catch (e) {
+                    console.warn('行内公式渲染失败:', e);
+                    span.textContent = '$' + formula + '$';
+                    span.className = 'latex-fallback';
+                }
+            });
+        }
+
+        // ----- 初始化 markdown-it 并配置容器插件 -----
+        function initMarkdownIt() {
+            const md = window.markdownit({
+                html: true,
+                linkify: true,
+                typographer: true,
+                breaks: true,
+                highlight: function (str, lang) {
+                    if (lang && hljs.getLanguage(lang)) {
+                        try {
+                            const highlighted = hljs.highlight(str, { language: lang }).value;
+                            return `<pre><code class="hljs language-${lang}">${highlighted}</code><span class="code-lang">${lang}</span></pre>`;
+                        } catch (__) { }
+                    }
+                    return `<pre><code class="hljs">${md.utils.escapeHtml(str)}</code></pre>`;
+                }
+            });
+
+            const containerTypes = ['info', 'warning', 'danger', 'success', 'tip'];
+            containerTypes.forEach(type => {
+                md.use(window.markdownitContainer, type, {
+                    validate: function (params) {
+                        return params.trim().match(new RegExp('^' + type + '\\s*(.*)$'));
+                    },
+                    render: function (tokens, idx) {
+                        const token = tokens[idx];
+                        const match = token.info.trim().match(new RegExp('^' + type + '\\s*(.*)$'));
+                        const title = match && match[1] ? match[1] : '';
+
+                        const icons = {
+                            info: 'fa-circle-info',
+                            warning: 'fa-triangle-exclamation',
+                            danger: 'fa-circle-xmark',
+                            success: 'fa-circle-check',
+                            tip: 'fa-lightbulb'
+                        };
+
+                        if (token.nesting === 1) {
+                            let titleHtml = '';
+                            if (title) {
+                                const renderedTitle = renderInlineMarkdown(title);
+                                titleHtml = `<div class="container-title"><i class="fas ${icons[type] || 'fa-circle-info'}"></i> ${renderedTitle}</div>`;
+                            } else {
+                                const defaultTitles = {
+                                    info: 'ℹ️ 信息',
+                                    warning: '⚠️ 警告',
+                                    danger: '🚫 危险',
+                                    success: '✅ 成功',
+                                    tip: '💡 提示'
+                                };
+                                titleHtml = `<div class="container-title"><i class="fas ${icons[type] || 'fa-circle-info'}"></i> ${defaultTitles[type] || '注意'}</div>`;
+                            }
+                            return `<div class="container container-${type}">${titleHtml}`;
+                        } else {
+                            return '</div>';
+                        }
+                    }
+                });
+            });
+
+            try {
+                md.use(window.markdownItAttrs);
+            } catch (e) { /* 可选插件，忽略加载失败 */ }
+
+            return md;
+        }
+
+        let md = null;
+        try {
+            md = initMarkdownIt();
+            console.log('✅ markdown-it + 容器插件 + 代码高亮加载成功');
+        } catch (e) {
+            console.warn('markdown-it 加载失败，降级使用 marked:', e);
+            md = null;
+        }
+
+        // ----- 渲染 Markdown -----
+        function renderMarkdown(content) {
+            if (!content) return '';
+
+            let processed = renderTaskList(content);
+            processed = protectLatex(processed);
+
+            if (md) {
+                try {
+                    return md.render(processed);
+                } catch (e) {
+                    console.warn('markdown-it 渲染失败，降级使用 marked:', e);
+                }
+            }
+
+            if (typeof marked !== 'undefined') {
+                try {
+                    return marked.parse(processed);
+                } catch (e) {
+                    console.warn('marked 渲染失败:', e);
+                    return escapeHtml(processed);
+                }
+            }
+
+            return escapeHtml(processed);
+        }
+
+        // ============================================================
+        // 增强的 LaTeX 渲染函数
+        // ============================================================
+        function renderLatexInContainer(container) {
+            restoreAndRenderLatex(container);
+
+            if (window.renderMathInElement) {
+                try {
+                    renderMathInElement(container, {
+                        delimiters: [
+                            { left: '$$', right: '$$', display: true },
+                            { left: '$', right: '$', display: false },
+                            { left: '\\[', right: '\\]', display: true },
+                            { left: '\\(', right: '\\)', display: false }
+                        ],
+                        throwOnError: false,
+                        errorColor: '#f85149',
+                        trust: true
+                    });
+                } catch (e) {
+                    console.warn('KaTeX auto-render 失败:', e);
+                }
+            }
+        }
+
+        // ----- 获取文章列表 -----
+        async function fetchPostsFromGitHub() {
+            try {
+                const data = await githubApi('posts');
+                return data.posts || [];
+            } catch (err) {
+                console.error('获取文章失败:', err);
+                throw err;
+            }
+        }
+
+        // ----- 创建新 Issue (需要管理员权限) -----
+        async function createPostInGitHub(title, body, date) {
+            if (!await verifyAdmin(true)) return null;
+            try {
+                return await githubApi('createPost', {
+                    method: 'POST',
+                    admin: true,
+                    body: { title, body, date }
+                });
+            } catch (err) { console.error('创建文章失败:', err); throw err; }
+        }
+
+        // ----- 更新 Issue (需要管理员权限) -----
+        async function updatePostInGitHub(issueNumber, title, body, date) {
+            if (!await verifyAdmin(true)) return null;
+            try {
+                return await githubApi('updatePost', {
+                    method: 'PATCH',
+                    admin: true,
+                    body: { issueNumber, title, body, date }
+                });
+            } catch (err) { console.error('更新文章失败:', err); throw err; }
+        }
+
+        // ----- 删除 Issue (需要管理员权限) -----
+        async function deletePostInGitHub(issueNumber) {
+            if (!await verifyAdmin(true)) return null;
+            try {
+                return await githubApi('deletePost', {
+                    method: 'PATCH',
+                    admin: true,
+                    body: { issueNumber }
+                });
+            } catch (err) { console.error('删除文章失败:', err); throw err; }
+        }
+
+        // ============================================================
+        // 专栏 UI 逻辑
+        // ============================================================
+
+        let currentView = 'list';
+        let currentPostId = null;
+        let editingIssueNumber = null;
+        const backBtn = document.getElementById('backBtnFixed');
+
+        async function showPostList() {
+            currentView = 'list';
+            currentPostId = null;
+            editingIssueNumber = null;
+            document.getElementById('postsSectionTitle').textContent = '洛谷 · 文章列表';
+            document.getElementById('editorContainer').style.display = 'none';
+            if (backBtn) backBtn.style.display = 'none';
+            await renderPostList();
+            updateAdminUI();
+        }
+
+        async function showPostDetail(issueNumber) {
+            currentView = 'detail';
+            currentPostId = issueNumber;
+            document.getElementById('postsSectionTitle').textContent = '洛谷 · 文章详情';
+            document.getElementById('editorContainer').style.display = 'none';
+            if (backBtn) {
+                backBtn.style.display = 'flex';
+                const label = document.getElementById('backBtnLabel');
+                if (label) label.textContent = '返回列表';
+            }
+            await renderPostDetail(issueNumber);
+        }
+
+        async function showEditor(editIssueNumber) {
+            if (!await verifyAdmin(true)) return;
+            currentView = 'edit';
+            editingIssueNumber = editIssueNumber || null;
+            document.getElementById('postsSectionTitle').textContent = editingIssueNumber ? '编辑文章' : '新建文章';
+            document.getElementById('editorContainer').style.display = 'block';
+
+            if (editingIssueNumber) {
+                const posts = window._cachedPosts || [];
+                const post = posts.find(p => p.number === editingIssueNumber);
+                if (post) {
+                    document.getElementById('postTitle').value = post.title || '';
+                    document.getElementById('postBody').value = post.body || '';
+                    document.getElementById('postDate').value = post.date || '';
+                }
+            } else {
+                document.getElementById('postTitle').value = '';
+                document.getElementById('postBody').value = '';
+                setTodayDate();
+            }
+
+            document.getElementById('editorContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        async function renderPostList() {
+            const container = document.getElementById('postContainer');
+            try {
+                const posts = await fetchPostsFromGitHub();
+                window._cachedPosts = posts;
+
+                if (!posts || posts.length === 0) {
+                    container.innerHTML = `
+                                                <div class="feed-empty" style="padding:30px 20px;">
+                                                    <i class="fas fa-file-alt" style="font-size:2rem;display:block;margin-bottom:12px;color:var(--border-color);"></i>
+                                                    暂无公开文章，点击「新建文章」开始创作
+                                                </div>
+                                            `;
+                    return;
+                }
+
+                posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                let html = '<div class="post-list">';
+                posts.forEach(post => {
+                    let renderedBody = renderMarkdown(post.body || '');
+                    const previewDiv = document.createElement('div');
+                    previewDiv.innerHTML = renderedBody;
+                    const text = previewDiv.textContent || '';
+                    const preview = text.length > 150 ? text.slice(0, 150) + '...' : text;
+
+                    let titleHtml = escapeHtml(post.title);
+                    const titleLinkMatch = post.title.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+                    if (titleLinkMatch) {
+                        titleHtml = `<a href="${titleLinkMatch[2]}" target="_blank">${escapeHtml(titleLinkMatch[1])}</a>`;
+                    }
+
+                    const isAdmin = isAdminAuthenticated();
+                    const actionButtons = isAdmin ? `
+                                                    <button class="action-btn" onclick="event.stopPropagation();showEditor(${post.number})" title="编辑">
+                                                        <i class="fas fa-edit"></i> 编辑
+                                                    </button>
+                                                    <button class="action-btn danger" onclick="event.stopPropagation();deletePost(${post.number})" title="删除">
+                                                        <i class="fas fa-trash-alt"></i> 删除
+                                                    </button>
+                                                ` : '';
+
+                    html += `
+                                                <div class="post-item" onclick="showPostDetail(${post.number})">
+                                                    <div class="post-item-title">${titleHtml}</div>
+                                                    <div class="post-item-meta">
+                                                        <span><i class="fas fa-calendar-alt"></i> ${post.date}</span>
+                                                        <span style="display:flex;gap:6px;margin-left:auto;">
+                                                            ${actionButtons}
+                                                        </span>
+                                                    </div>
+                                                    <div class="post-item-body">${escapeHtml(preview)}</div>
+                                                </div>
+                                            `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+
+                renderLatexInContainer(container);
+
+                if (typeof hljs !== 'undefined') {
+                    container.querySelectorAll('pre code').forEach((block) => {
+                        hljs.highlightElement(block);
+                    });
+                }
+            } catch (err) {
+                container.innerHTML = `
+                                                <div class="feed-empty">
+                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                    加载文章失败
+                                                    <div style="margin-top:8px;font-size:0.8rem;color:var(--text-dim);">${err.message || '请检查网络或 GitHub 配置'}</div>
+                                                    <button onclick="renderPostList()" style="margin-top:12px;padding:6px 20px;background:var(--accent);color:white;border:none;border-radius:30px;cursor:pointer;font-family:inherit;">
+                                                        <i class="fas fa-redo"></i> 重试
+                                                    </button>
+                                                </div>
+                                            `;
+            }
+        }
+
+        async function renderPostDetail(issueNumber) {
+            const container = document.getElementById('postContainer');
+            try {
+                const posts = window._cachedPosts || [];
+                const post = posts.find(p => p.number === issueNumber);
+                if (!post) {
+                    await renderPostList();
+                    return;
+                }
+
+                let renderedBody = renderMarkdown(post.body || '');
+
+                let titleHtml = escapeHtml(post.title);
+                const titleLinkMatch = post.title.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+                if (titleLinkMatch) {
+                    titleHtml = `<a href="${titleLinkMatch[2]}" target="_blank">${escapeHtml(titleLinkMatch[1])}</a>`;
+                }
+
+                const isAdmin = isAdminAuthenticated();
+                const actionButtons = isAdmin ? `
+                                                <button class="action-btn" onclick="showEditor(${post.number})" title="编辑">
+                                                    <i class="fas fa-edit"></i> 编辑
+                                                </button>
+                                                <button class="action-btn danger" onclick="deletePost(${post.number})" title="删除">
+                                                    <i class="fas fa-trash-alt"></i> 删除
+                                                </button>
+                                            ` : '';
+
+                let html = `
+                                                <div class="post-detail">
+                                                    <div class="post-item" style="cursor:default;border-color:var(--accent);">
+                                                        <div class="post-item-title">${titleHtml}</div>
+                                                        <div class="post-item-meta">
+                                                            <span><i class="fas fa-calendar-alt"></i> ${post.date}</span>
+                                                            <span style="display:flex;gap:6px;margin-left:auto;">
+                                                                ${actionButtons}
+                                                            </span>
+                                                        </div>
+                                                        <div class="post-item-body" style="-webkit-line-clamp:unset;overflow:visible;">${renderedBody}</div>
+                                                    </div>
+                                                </div>
+                                            `;
+                container.innerHTML = html;
+
+                renderLatexInContainer(container);
+
+                if (typeof hljs !== 'undefined') {
+                    container.querySelectorAll('pre code').forEach((block) => {
+                        hljs.highlightElement(block);
+                    });
+                }
+            } catch (err) {
+                container.innerHTML = `<div class="feed-empty"><i class="fas fa-exclamation-triangle"></i>加载详情失败</div>`;
+            }
+        }
+
+        // ----- 删除文章 (需要管理员权限) -----
+        async function deletePost(issueNumber) {
+            if (!await verifyAdmin(true)) return;
+            if (!confirm('确定要删除这篇文章吗？删除后将不可恢复。')) return;
+            try {
+                await deletePostInGitHub(issueNumber);
+                await renderPostList();
+                alert('✅ 文章已删除');
+            } catch (err) {
+                alert('❌ 删除失败: ' + err.message);
+            }
+        }
+
+        // ----- 保存文章 (需要管理员权限) -----
+        async function savePost() {
+            if (!await verifyAdmin(true)) return;
+            const title = document.getElementById('postTitle').value.trim();
+            const body = document.getElementById('postBody').value.trim();
+            const date = document.getElementById('postDate').value;
+
+            if (!title) { alert('请输入文章标题'); return; }
+            if (!body) { alert('请输入文章正文'); return; }
+            if (!date) { alert('请选择发布日期'); return; }
+
+            try {
+                if (editingIssueNumber) {
+                    await updatePostInGitHub(editingIssueNumber, title, body, date);
+                } else {
+                    await createPostInGitHub(title, body, date);
+                }
+                editingIssueNumber = null;
+                document.getElementById('editorContainer').style.display = 'none';
+                await renderPostList();
+                alert('✅ 文章已保存！');
+            } catch (err) {
+                alert('❌ 保存失败: ' + err.message);
+            }
+        }
+
+        function cancelEdit() {
+            editingIssueNumber = null;
+            document.getElementById('editorContainer').style.display = 'none';
+            showPostList();
+        }
+
+        function setTodayDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('postDate').value = today;
+        }
+
+        // 暴露全局函数
+        window.showPostList = showPostList;
+        window.showPostDetail = showPostDetail;
+        window.showEditor = showEditor;
+        window.renderPostList = renderPostList;
+        window.deletePost = deletePost;
+        window.savePost = savePost;
+        window.cancelEdit = cancelEdit;
+        window.setTodayDate = setTodayDate;
+
+        // 首次加载时渲染文章列表
+        window.addEventListener('load', function () {
+            const activeTab = document.querySelector('.tab-btn.active');
+            if (activeTab && activeTab.dataset.tab === 'posts') {
+                showPostList();
+            }
+        });
+
+        console.log('📝 专栏系统已加载 (仅显示未关闭 + 容器插件 + 任务列表 + 代码高亮 + 行内公式)');
+        console.log('📦 GitHub 内容通过后端代理接口加载');
+    </script>
+
+    <script>
+        console.log('🚀 zhedaotixuanbo 个人主页 (头像云端存储 + 管理员验证)');
+    </script>
+
+</body>
+</html>
