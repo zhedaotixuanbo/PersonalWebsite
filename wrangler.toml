@@ -1,3 +1,7 @@
 name = "personal-website"
 compatibility_date = "2024-09-23"
 pages_build_output_dir = "."
+
+[vars]
+GITHUB_OWNER = "zhedaotixuanbo"
+GITHUB_REPO = "PersonalWebsite"
