@@ -171,7 +171,11 @@ async function githubRequest(config, path, options = {}) {
 
 function mapPosts(issues) {
     return issues
-        .filter(issue => !issue.pull_request && !issue.labels?.some(label => label.name === 'avatar'))
+        .filter(issue =>
+            !issue.pull_request &&
+            issue.title !== '头像存储' &&
+            !issue.labels?.some(label => label.name === 'avatar')
+        )
         .map(issue => {
             let date = '';
             if (issue.labels && issue.labels.length > 0) {
@@ -197,11 +201,18 @@ function mapPosts(issues) {
         });
 }
 
-async function getAvatar(config) {
-    const issues = await githubRequest(config, `/repos/${config.githubOwner}/${config.githubRepo}/issues?labels=avatar&state=all&per_page=1`);
-    if (!issues || issues.length === 0) return { avatarUrl: null };
+async function findAvatarIssue(config) {
+    const issues = await githubRequest(config, `/repos/${config.githubOwner}/${config.githubRepo}/issues?state=all&per_page=100`);
+    return (issues || []).find(issue =>
+        !issue.pull_request &&
+        (issue.title === '头像存储' || issue.labels?.some(label => label.name === 'avatar'))
+    ) || null;
+}
 
-    const issue = issues[0];
+async function getAvatar(config) {
+    const issue = await findAvatarIssue(config);
+    if (!issue) return { avatarUrl: null };
+
     const bodyMatch = (issue.body || '').match(/!\[.*?\]\((.*?)\)/);
     if (bodyMatch) return { avatarUrl: bodyMatch[1] };
 
@@ -221,20 +232,26 @@ async function uploadAvatar(config, imageDataUrl) {
         throw err;
     }
 
-    const issues = await githubRequest(config, `/repos/${config.githubOwner}/${config.githubRepo}/issues?labels=avatar&state=all&per_page=1`);
+    if (imageDataUrl.length > 60000) {
+        const err = new Error('头像数据仍然过大，请换一张更小的图片');
+        err.status = 400;
+        throw err;
+    }
+
+    const issue = await findAvatarIssue(config);
     const body = `# 头像\n\n![头像](${imageDataUrl})\n\n> 此 Issue 用于存储头像，请勿删除或修改。`;
 
-    if (issues && issues.length > 0) {
-        await githubRequest(config, `/repos/${config.githubOwner}/${config.githubRepo}/issues/${issues[0].number}`, {
+    if (issue) {
+        await githubRequest(config, `/repos/${config.githubOwner}/${config.githubRepo}/issues/${issue.number}`, {
             method: 'PATCH',
-            body: { body, labels: ['avatar'] }
+            body: { title: '头像存储', body }
         });
-        return { ok: true, issueNumber: issues[0].number };
+        return { ok: true, issueNumber: issue.number };
     }
 
     const created = await githubRequest(config, `/repos/${config.githubOwner}/${config.githubRepo}/issues`, {
         method: 'POST',
-        body: { title: '头像存储', body, labels: ['avatar'] }
+        body: { title: '头像存储', body }
     });
     return { ok: true, issueNumber: created.number };
 }
@@ -260,6 +277,17 @@ export async function onRequest(context) {
         if (action === 'logout' && method === 'POST') {
             return json({ ok: true }, 200, {
                 'Set-Cookie': clearAdminSessionCookie()
+            });
+        }
+
+        if (action === 'health' && method === 'GET') {
+            return json({
+                ok: true,
+                githubOwner: config.githubOwner,
+                githubRepo: config.githubRepo,
+                hasGithubToken: !!config.githubToken,
+                hasAdminPasswordHash: !!config.adminPasswordHash,
+                hasAdminSessionSecret: !!config.adminSessionSecret
             });
         }
 
