@@ -126,20 +126,28 @@ async function verifyAdmin(config, body) {
 }
 
 async function githubRequest(config, path, options = {}) {
-    if (!config.githubToken) {
+    const method = options.method || 'GET';
+    const needsToken = method !== 'GET' || options.requireAuth;
+
+    if (needsToken && !config.githubToken) {
         const err = new Error('服务器未配置 GITHUB_TOKEN');
         err.status = 500;
         throw err;
     }
 
+    const headers = {
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json',
+        'User-Agent': 'personal-website-cloudflare-worker'
+    };
+
+    if (config.githubToken) {
+        headers['Authorization'] = `Bearer ${config.githubToken}`;
+    }
+
     const resp = await fetch(`${GITHUB_API}${path}`, {
-        method: options.method || 'GET',
-        headers: {
-            'Accept': 'application/vnd.github.v3+json',
-            'Authorization': `Bearer ${config.githubToken}`,
-            'Content-Type': 'application/json',
-            'User-Agent': 'personal-website-cloudflare-worker'
-        },
+        method,
+        headers,
         body: options.body ? JSON.stringify(options.body) : undefined
     });
 
