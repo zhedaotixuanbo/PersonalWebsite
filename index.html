@@ -1897,10 +1897,10 @@
                 location.hash = '/posts/' + issueNumber;
             };
 
-            // 重写 backToListAndHome 使其清空 hash 回首页
+            // 重写 backToListAndHome 使其回到专栏列表
             const _origBackToListAndHome = window.backToListAndHome;
             window.backToListAndHome = function () {
-                location.hash = '/home';
+                location.hash = '/posts';
             };
 
             // 监听 hash 变化
@@ -1963,10 +1963,13 @@
     <!-- ============================================================ -->
     <script>
         const VIDEO_LIST = [
-            { title: '【Roblox 阳光群岛】不是？你告诉我涂装是这么设计的？', cover: 'https://i0.hdslb.com/bfs/archive/259d7877b761f87aa84d958eae6d47ebb0eb5ebe.jpg', date: '2024-08-10', link: 'https://www.bilibili.com/video/BV1j4YLejEyG' },
-            { title: '【Roblox 阳光群岛】2.0更新后成就全收集！疯狂卷走所有阳光币！', cover: 'https://i2.hdslb.com/bfs/archive/6e8eb3da558fd9d32f6fff00cf21ef0581f459d1.jpg', date: '2024-07-09', link: 'https://www.bilibili.com/video/BV1o9avevEVh' },
-            { title: '【Roblox 阳光群岛】鸽了快一年，继续来填坑！宇通&大巴涂装制作（建议搭配上期一起食用）', cover: 'https://i1.hdslb.com/bfs/archive/490c4426f8026a8c5158c0a3ab2d0af2edf4ee96.jpg', date: '2025-07-04', link: 'https://www.bilibili.com/video/BV1Y43JzdEVS' }
+            { title: '【Roblox 阳光群岛】不是？你告诉我涂装是这么设计的？', cover: 'https://i0.hdslb.com/bfs/archive/259d7877b761f87aa84d958eae6d47ebb0eb5ebe.jpg', date: '2024-08-10', bvid: 'BV1j4YLejEyG', link: 'https://www.bilibili.com/video/BV1j4YLejEyG' },
+            { title: '【Roblox 阳光群岛】2.0更新后成就全收集！疯狂卷走所有阳光币！', cover: 'https://i2.hdslb.com/bfs/archive/6e8eb3da558fd9d32f6fff00cf21ef0581f459d1.jpg', date: '2024-07-09', bvid: 'BV1o9avevEVh', link: 'https://www.bilibili.com/video/BV1o9avevEVh' },
+            { title: '【Roblox 阳光群岛】鸽了快一年，继续来填坑！宇通&大巴涂装制作（建议搭配上期一起食用）', cover: 'https://i1.hdslb.com/bfs/archive/490c4426f8026a8c5158c0a3ab2d0af2edf4ee96.jpg', date: '2025-07-04', bvid: 'BV1Y43JzdEVS', link: 'https://www.bilibili.com/video/BV1Y43JzdEVS' }
         ];
+
+        // 当前正在播放的视频（null 表示无）
+        let currentPlayingBvid = null;
 
         function renderVideoList() {
             const container = document.getElementById('videoContainer');
@@ -1978,17 +1981,58 @@
             let html = '<div class="video-grid">';
             sorted.forEach(v => {
                 html += `
-                                    <a href="${v.link}" target="_blank" class="video-item">
+                                    <div class="video-item" style="cursor:pointer;" onclick="playVideo('${v.bvid}')">
                                         <div class="video-info">
                                             <div class="video-item-title">${escapeHtml(v.title)}</div>
                                             <div class="video-item-meta"><span><i class="fas fa-calendar-alt"></i> ${v.date}</span></div>
                                         </div>
                                         <div class="video-cover"><img src="${v.cover}" alt="${escapeHtml(v.title)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 160 100%22><rect width=%22160%22 height=%22100%22 fill=%22%23333%22/><text x=%2280%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%23888%22 font-size=%2214%22>暂无封面</text></svg>'"></div>
-                                    </a>
+                                    </div>
                                 `;
             });
             html += '</div>';
+            html += '<div id="videoPlayerContainer" style="display:none;margin-top:20px;"></div>';
             container.innerHTML = html;
+            // 如果有正在播放的视频，恢复播放器
+            if (currentPlayingBvid) renderPlayer(currentPlayingBvid);
+        }
+
+        function playVideo(bvid) {
+            currentPlayingBvid = bvid;
+            renderPlayer(bvid);
+            // 滚动到播放器
+            const playerEl = document.getElementById('videoPlayerContainer');
+            if (playerEl) playerEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function renderPlayer(bvid) {
+            const playerEl = document.getElementById('videoPlayerContainer');
+            if (!playerEl) return;
+            playerEl.style.display = 'block';
+            playerEl.innerHTML = `
+                <div style="position:relative;width:100%;padding-bottom:56.25%;background:#000;border-radius:var(--card-radius);overflow:hidden;">
+                    <iframe src="https://player.bilibili.com/player.html?bvid=${bvid}&high_quality=1&autoplay=0"
+                        style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"
+                        allowfullscreen="true" scrolling="no" sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts"></iframe>
+                </div>
+                <div style="display:flex;justify-content:center;gap:12px;margin-top:12px;">
+                    <a href="https://www.bilibili.com/video/${bvid}" target="_blank" class="more-btn" style="text-decoration:none;">
+                        <i class="fas fa-external-link-alt"></i> 前往B站观看
+                    </a>
+                    <button onclick="closePlayer()" class="more-btn" style="background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border-color);">
+                        <i class="fas fa-times"></i> 关闭播放器
+                    </button>
+                </div>
+            `;
+        }
+
+        function closePlayer() {
+            currentPlayingBvid = null;
+            const playerEl = document.getElementById('videoPlayerContainer');
+            if (playerEl) {
+                playerEl.style.display = 'none';
+                playerEl.innerHTML = '';
+            }
         }
 
         function escapeHtml(text) {
@@ -2392,15 +2436,24 @@
             if (postsTab) postsTab.classList.add('hidden');
         }
 
-        // 返回列表按键：先切回首页，再隐藏按键
+        // 返回列表按键：回到专栏列表，隐藏按键
         window.backToListAndHome = async function () {
             if (backBtn) backBtn.style.display = 'none';
-            switchToHomeTab();
-            // 重置专栏状态
+            // 重置专栏状态并回到列表
             currentView = 'list';
             currentPostId = null;
             editingIssueNumber = null;
+            document.getElementById('postsSectionTitle').textContent = '洛谷 · 文章列表';
             document.getElementById('editorContainer').style.display = 'none';
+            // 切换到专栏选项卡
+            const postsBtn = document.querySelector('.tab-btn[data-tab="posts"]');
+            const postsTab = document.getElementById('tab-posts');
+            const homeTab = document.getElementById('tab-home');
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if (postsBtn) postsBtn.classList.add('active');
+            if (postsTab) postsTab.classList.remove('hidden');
+            await renderPostList(false);
             updateAdminUI();
         };
 
@@ -2488,7 +2541,7 @@
                                                 ` : '';
 
                     html += `
-                                                <div class="post-item" onclick="showPostDetail(${post.number})">
+                                                <div class="post-item" onclick="location.hash='/posts/${post.number}'">
                                                     <div class="post-item-title">${titleHtml}</div>
                                                     <div class="post-item-meta">
                                                         <span><i class="fas fa-calendar-alt"></i> ${post.date}</span>
