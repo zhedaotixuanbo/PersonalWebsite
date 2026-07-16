@@ -755,6 +755,39 @@
                 position: relative;
             }
 
+            .code-copy-btn {
+                position: absolute;
+                top: 6px;
+                right: 6px;
+                padding: 3px 10px;
+                font-size: 0.75rem;
+                background: var(--bg-input);
+                color: var(--text-muted);
+                border: 1px solid var(--code-border);
+                border-radius: 4px;
+                cursor: pointer;
+                opacity: 0;
+                transition: opacity 0.2s, background 0.2s;
+                z-index: 2;
+                font-family: inherit;
+            }
+
+                .post-item-body pre:hover .code-copy-btn {
+                    opacity: 1;
+                }
+
+                .code-copy-btn:hover {
+                    background: var(--accent);
+                    color: #fff;
+                    border-color: var(--accent);
+                }
+
+                .code-copy-btn.copied {
+                    background: #2ea043;
+                    color: #fff;
+                    border-color: #2ea043;
+                }
+
                 .post-item-body pre code {
                     font-family: 'Consolas', 'Courier New', monospace;
                     font-size: 0.9rem;
@@ -1553,24 +1586,80 @@
         }
 
         async function promptAdminPassword() {
-            const password = prompt('🔐 请输入管理员密码：');
-            if (password === null) return false;
+            return new Promise((resolve) => {
+                // 创建模态框
+                const overlay = document.createElement('div');
+                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;';
 
-            const resp = await fetch(`${API_BASE}?action=verify`, {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password })
+                const modal = document.createElement('div');
+                modal.style.cssText = 'background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--card-radius);padding:28px 32px;width:340px;max-width:90vw;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.3);';
+
+                modal.innerHTML = `
+                    <div style="font-size:1.1rem;font-weight:600;margin-bottom:4px;color:var(--text-primary);">🔐 管理员验证</div>
+                    <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:18px;">请输入管理员密码</div>
+                    <input type="password" id="_adminPwdInput" placeholder="输入密码..." autocomplete="off"
+                        style="width:100%;padding:10px 14px;border:1px solid var(--border-color);border-radius:8px;background:var(--bg-input);color:var(--text-primary);font-size:1rem;outline:none;box-sizing:border-box;font-family:inherit;letter-spacing:2px;">
+                    <div style="display:flex;gap:10px;margin-top:16px;">
+                        <button id="_adminPwdCancel" style="flex:1;padding:9px;border-radius:8px;border:1px solid var(--border-color);background:var(--bg-input);color:var(--text-primary);cursor:pointer;font-family:inherit;font-size:0.9rem;">取消</button>
+                        <button id="_adminPwdOk" style="flex:1;padding:9px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-family:inherit;font-size:0.9rem;">确认</button>
+                    </div>
+                `;
+
+                overlay.appendChild(modal);
+                document.body.appendChild(overlay);
+
+                const input = document.getElementById('_adminPwdInput');
+                const cancelBtn = document.getElementById('_adminPwdCancel');
+                const okBtn = document.getElementById('_adminPwdOk');
+
+                let resolved = false;
+
+                function cleanup() {
+                    if (resolved) return;
+                    resolved = true;
+                    overlay.remove();
+                }
+
+                cancelBtn.onclick = () => { cleanup(); resolve(false); };
+                overlay.onclick = (e) => { if (e.target === overlay) { cleanup(); resolve(false); } };
+
+                async function submit() {
+                    const password = input.value;
+                    if (!password) return;
+                    okBtn.disabled = true;
+                    okBtn.textContent = '验证中...';
+                    try {
+                        const resp = await fetch(`${API_BASE}?action=verify`, {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ password })
+                        });
+                        if (resp.ok) {
+                            setAdminAuthenticated();
+                            cleanup();
+                            resolve(true);
+                        } else {
+                            input.style.borderColor = '#e8463a';
+                            input.value = '';
+                            input.placeholder = '密码错误，请重试';
+                            okBtn.disabled = false;
+                            okBtn.textContent = '确认';
+                            input.focus();
+                        }
+                    } catch (err) {
+                        input.style.borderColor = '#e8463a';
+                        input.placeholder = '网络错误';
+                        okBtn.disabled = false;
+                        okBtn.textContent = '确认';
+                    }
+                }
+
+                okBtn.onclick = submit;
+                input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+
+                setTimeout(() => input.focus(), 50);
             });
-
-            if (resp.ok) {
-                setAdminAuthenticated();
-                alert('✅ 已进入管理员模式');
-                return true;
-            } else {
-                alert('❌ 密码错误，请重试');
-                return false;
-            }
         }
 
         async function verifyAdmin(showAlert = true) {
@@ -1847,6 +1936,35 @@
         });
 
         window.exitAdminMode = exitAdminMode;
+    </script>
+
+    <!-- 代码块复制按钮工具函数 -->
+    <script>
+        function addCodeCopyButtons(container) {
+            container.querySelectorAll('pre').forEach(pre => {
+                if (pre.querySelector('.code-copy-btn')) return;
+                const btn = document.createElement('button');
+                btn.className = 'code-copy-btn';
+                btn.textContent = '复制';
+                btn.onclick = function (e) {
+                    e.stopPropagation();
+                    const code = pre.querySelector('code');
+                    const text = code ? code.textContent : pre.textContent;
+                    navigator.clipboard.writeText(text).then(() => {
+                        btn.textContent = '已复制';
+                        btn.classList.add('copied');
+                        setTimeout(() => {
+                            btn.textContent = '复制';
+                            btn.classList.remove('copied');
+                        }, 2000);
+                    }).catch(() => {
+                        btn.textContent = '失败';
+                        setTimeout(() => { btn.textContent = '复制'; }, 1500);
+                    });
+                };
+                pre.appendChild(btn);
+            });
+        }
     </script>
 
     <!-- 3. 选项卡切换 + Hash 路由 -->
@@ -2547,6 +2665,7 @@
                         hljs.highlightElement(block);
                     });
                 }
+                addCodeCopyButtons(container);
             } catch (err) {
                 container.innerHTML = `
                                                 <div class="feed-empty">
@@ -2564,10 +2683,16 @@
         async function renderPostDetail(issueNumber) {
             const container = document.getElementById('postContainer');
             try {
-                const posts = window._cachedPosts || [];
-                const post = posts.find(p => p.number === issueNumber);
+                let posts = window._cachedPosts || [];
+                let post = posts.find(p => p.number === issueNumber);
+                // 缓存中没有，先从 GitHub 加载文章列表
                 if (!post) {
-                    await renderPostList();
+                    posts = await fetchPostsFromGitHub();
+                    window._cachedPosts = posts;
+                    post = posts.find(p => p.number === issueNumber);
+                }
+                if (!post) {
+                    container.innerHTML = `<div class="feed-empty"><i class="fas fa-exclamation-triangle"></i>未找到该文章</div>`;
                     return;
                 }
 
@@ -2612,6 +2737,7 @@
                         hljs.highlightElement(block);
                     });
                 }
+                addCodeCopyButtons(container);
             } catch (err) {
                 container.innerHTML = `<div class="feed-empty"><i class="fas fa-exclamation-triangle"></i>加载详情失败</div>`;
             }
