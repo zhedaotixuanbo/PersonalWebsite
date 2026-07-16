@@ -758,18 +758,22 @@
             .code-copy-btn {
                 position: absolute;
                 top: 6px;
-                right: 6px;
-                padding: 3px 10px;
-                font-size: 0.75rem;
+                right: 32px;
+                width: 28px;
+                height: 28px;
+                padding: 0;
+                font-size: 0.8rem;
                 background: var(--bg-input);
                 color: var(--text-muted);
                 border: 1px solid var(--code-border);
                 border-radius: 4px;
                 cursor: pointer;
                 opacity: 0;
-                transition: opacity 0.2s, background 0.2s;
+                transition: opacity 0.2s, background 0.2s, color 0.2s;
                 z-index: 2;
-                font-family: inherit;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
                 .post-item-body pre:hover .code-copy-btn {
@@ -783,8 +787,7 @@
                 }
 
                 .code-copy-btn.copied {
-                    background: #2ea043;
-                    color: #fff;
+                    color: #2ea043;
                     border-color: #2ea043;
                 }
 
@@ -1531,7 +1534,7 @@
             const email = 'zzmerto_0431@163.com';
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(email).then(() => {
-                    alert('✅ 邮箱已复制: ' + email);
+                    showModal('邮箱已复制', 'success');
                 }).catch(() => {
                     fallbackCopy(email);
                 });
@@ -1549,9 +1552,9 @@
             textarea.select();
             try {
                 document.execCommand('copy');
-                alert('✅ 邮箱已复制: ' + text);
+                showModal('邮箱已复制', 'success');
             } catch (err) {
-                alert('❌ 复制失败，请手动复制: ' + text);
+                showModal('复制失败，请手动复制', 'error');
             }
             document.body.removeChild(textarea);
         }
@@ -1666,7 +1669,7 @@
             if (isAdminAuthenticated()) return true;
             const result = await promptAdminPassword();
             if (!result && showAlert) {
-                alert('⚠️ 需要管理员权限才能执行此操作');
+                showModal('需要管理员权限才能执行此操作', 'warning');
             }
             return result;
         }
@@ -1710,10 +1713,10 @@
         }
 
         // ----- 退出管理员模式 -----
-        function exitAdminMode() {
-            if (confirm('确定要退出管理员模式吗？')) {
+        async function exitAdminMode() {
+            if (await showConfirm('确定要退出管理员模式吗？')) {
                 clearAdminAuth();
-                alert('✅ 已退出管理员模式');
+                showModal('已退出管理员模式', 'success');
                 renderGamesContent();
                 if (document.getElementById('postContainer') &&
                     !document.getElementById('tab-posts').classList.contains('hidden')) {
@@ -1746,7 +1749,7 @@
                 return true;
             } catch (err) {
                 console.error('上传头像失败:', err);
-                alert('❌ 上传头像失败: ' + err.message);
+                showModal('上传头像失败: ' + err.message, 'error');
                 return false;
             }
         }
@@ -1865,7 +1868,7 @@
                 const file = e.target.files[0];
                 if (!file) return;
                 if (!isAdminAuthenticated()) {
-                    alert('⚠️ 需要管理员权限才能更换头像');
+                    showModal('需要管理员权限才能更换头像', 'warning');
                     return;
                 }
                 try {
@@ -1878,10 +1881,10 @@
                         avatarEl.style.backgroundColor = 'transparent';
                         avatarEl.innerText = '';
                         updateFavicon(imageData);
-                        alert('✅ 头像已更新并同步到云端');
+                        showModal('头像已更新并同步到云端', 'success');
                     }
                 } catch (err) {
-                    alert('❌ 头像处理失败: ' + err.message);
+                    showModal('头像处理失败: ' + err.message, 'error');
                 }
                 fileInput.value = '';
             });
@@ -1907,7 +1910,7 @@
                             showPostList();
                         }
                     } else {
-                        alert('ℹ️ 当前已是管理员模式');
+                        showModal('当前已是管理员模式', 'info');
                     }
                 }
             });
@@ -1926,6 +1929,9 @@
             setupAvatarInteraction();
             updateAdminUI();
 
+            // 如果路由已经处理了特定页面（如文章详情），不要覆盖
+            if (window._routeHandled) return;
+
             const activeTab = document.querySelector('.tab-btn.active');
             if (activeTab && activeTab.dataset.tab === 'games') {
                 renderGamesContent();
@@ -1938,6 +1944,68 @@
         window.exitAdminMode = exitAdminMode;
     </script>
 
+    <!-- 通用自定义弹窗（替代 alert/confirm） -->
+    <script>
+        // 自定义 alert：返回 Promise，用法 await showModal('消息')
+        window.showModal = function(message, type) {
+            type = type || 'info';
+            return new Promise(resolve => {
+                const overlay = document.createElement('div');
+                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;';
+
+                const modal = document.createElement('div');
+                modal.style.cssText = 'background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--card-radius);padding:28px 32px;width:340px;max-width:90vw;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.3);';
+
+                const iconMap = { success: 'fa-check-circle', error: 'fa-times-circle', info: 'fa-info-circle', warning: 'fa-exclamation-triangle' };
+                const colorMap = { success: '#2ea043', error: '#e8463a', info: 'var(--accent)', warning: '#efa917' };
+                const icon = iconMap[type] || iconMap.info;
+                const color = colorMap[type] || colorMap.info;
+
+                modal.innerHTML = `
+                    <div style="font-size:2rem;color:${color};margin-bottom:12px;"><i class="fas ${icon}"></i></div>
+                    <div style="font-size:0.95rem;color:var(--text-primary);line-height:1.5;margin-bottom:18px;word-break:break-word;">${message}</div>
+                    <button style="width:100%;padding:9px;border-radius:8px;border:none;background:${color};color:#fff;cursor:pointer;font-family:inherit;font-size:0.9rem;">确定</button>
+                `;
+
+                overlay.appendChild(modal);
+                document.body.appendChild(overlay);
+
+                function close() { overlay.remove(); resolve(true); }
+                modal.querySelector('button').onclick = close;
+                overlay.onclick = (e) => { if (e.target === overlay) close(); };
+            });
+        };
+
+        // 自定义 confirm：返回 Promise<boolean>
+        window.showConfirm = function(message) {
+            return new Promise(resolve => {
+                const overlay = document.createElement('div');
+                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;';
+
+                const modal = document.createElement('div');
+                modal.style.cssText = 'background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--card-radius);padding:28px 32px;width:340px;max-width:90vw;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.3);';
+
+                modal.innerHTML = `
+                    <div style="font-size:2rem;color:var(--warning, #efa917);margin-bottom:12px;"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div style="font-size:0.95rem;color:var(--text-primary);line-height:1.5;margin-bottom:18px;word-break:break-word;">${message}</div>
+                    <div style="display:flex;gap:10px;">
+                        <button style="flex:1;padding:9px;border-radius:8px;border:1px solid var(--border-color);background:var(--bg-input);color:var(--text-primary);cursor:pointer;font-family:inherit;font-size:0.9rem;" data-result="false">取消</button>
+                        <button style="flex:1;padding:9px;border-radius:8px;border:none;background:#e8463a;color:#fff;cursor:pointer;font-family:inherit;font-size:0.9rem;" data-result="true">确定</button>
+                    </div>
+                `;
+
+                overlay.appendChild(modal);
+                document.body.appendChild(overlay);
+
+                function close(result) { overlay.remove(); resolve(result); }
+                modal.querySelectorAll('button').forEach(btn => {
+                    btn.onclick = () => close(btn.dataset.result === 'true');
+                });
+                overlay.onclick = (e) => { if (e.target === overlay) close(false); };
+            });
+        };
+    </script>
+
     <!-- 代码块复制按钮工具函数 -->
     <script>
         function addCodeCopyButtons(container) {
@@ -1945,21 +2013,22 @@
                 if (pre.querySelector('.code-copy-btn')) return;
                 const btn = document.createElement('button');
                 btn.className = 'code-copy-btn';
-                btn.textContent = '复制';
+                btn.title = '复制代码';
+                btn.innerHTML = '<i class="fas fa-copy"></i>';
                 btn.onclick = function (e) {
                     e.stopPropagation();
                     const code = pre.querySelector('code');
                     const text = code ? code.textContent : pre.textContent;
                     navigator.clipboard.writeText(text).then(() => {
-                        btn.textContent = '已复制';
+                        btn.innerHTML = '<i class="fas fa-check"></i>';
                         btn.classList.add('copied');
                         setTimeout(() => {
-                            btn.textContent = '复制';
+                            btn.innerHTML = '<i class="fas fa-copy"></i>';
                             btn.classList.remove('copied');
                         }, 2000);
                     }).catch(() => {
-                        btn.textContent = '失败';
-                        setTimeout(() => { btn.textContent = '复制'; }, 1500);
+                        btn.classList.remove('copied');
+                        setTimeout(() => { btn.classList.remove('copied'); }, 1500);
                     });
                 };
                 pre.appendChild(btn);
@@ -2021,6 +2090,7 @@
 
                 if (parts[0] === 'posts' && parts[1]) {
                     // /posts/123 → 文章详情
+                    window._routeHandled = true;
                     navigateToTab('posts', parseInt(parts[1]));
                 } else if (['home', 'games', 'videos', 'posts'].includes(parts[0])) {
                     navigateToTab(parts[0]);
@@ -2029,8 +2099,13 @@
                 }
             }
 
-            // 页面加载时根据 hash 还原状态
-            handleRoute();
+            // 页面加载时根据 hash 还原状态（延迟确保所有脚本已加载）
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', handleRoute);
+            } else {
+                // DOM 已就绪，但后续脚本可能还没执行，用 setTimeout 确保
+                setTimeout(handleRoute, 0);
+            }
         })();
     </script>
 
@@ -2746,13 +2821,13 @@
         // ----- 删除文章 (需要管理员权限) -----
         async function deletePost(issueNumber) {
             if (!await verifyAdmin(true)) return;
-            if (!confirm('确定要删除这篇文章吗？删除后将不可恢复。')) return;
+            if (!await showConfirm('确定要删除这篇文章吗？删除后将不可恢复。')) return;
             try {
                 await deletePostInGitHub(issueNumber);
                 await renderPostList();
-                alert('✅ 文章已删除');
+                showModal('文章已删除', 'success');
             } catch (err) {
-                alert('❌ 删除失败: ' + err.message);
+                showModal('删除失败: ' + err.message, 'error');
             }
         }
 
@@ -2763,9 +2838,9 @@
             const body = document.getElementById('postBody').value.trim();
             const date = document.getElementById('postDate').value;
 
-            if (!title) { alert('请输入文章标题'); return; }
-            if (!body) { alert('请输入文章正文'); return; }
-            if (!date) { alert('请选择发布日期'); return; }
+            if (!title) { showModal('请输入文章标题', 'warning'); return; }
+            if (!body) { showModal('请输入文章正文', 'warning'); return; }
+            if (!date) { showModal('请选择发布日期', 'warning'); return; }
 
             try {
                 if (editingIssueNumber) {
@@ -2776,9 +2851,9 @@
                 editingIssueNumber = null;
                 document.getElementById('editorContainer').style.display = 'none';
                 await renderPostList();
-                alert('✅ 文章已保存！');
+                showModal('文章已保存！', 'success');
             } catch (err) {
-                alert('❌ 保存失败: ' + err.message);
+                showModal('保存失败: ' + err.message, 'error');
             }
         }
 
