@@ -1356,7 +1356,7 @@
     </button>
 
     <!-- ===== 左下角返回按钮（固定，详情页显示） ===== -->
-    <button class="back-btn-fixed" id="backBtnFixed" onclick="backToListAndHome()">
+    <button class="back-btn-fixed" id="backBtnFixed" onclick="location.hash='/posts'">
         <i class="fas fa-arrow-left"></i>
         <span id="backBtnLabel">返回列表</span>
     </button>
@@ -1871,16 +1871,16 @@
                 });
                 if (backBtn) backBtn.style.display = 'none';
 
-                if (tabName === 'videos') renderVideoList();
+                if (tabName === 'videos') window.renderVideoList();
                 if (tabName === 'posts') {
                     if (postId) {
-                        showPostDetail(postId);
+                        window.showPostDetail(postId);
                     } else {
-                        showPostList();
+                        window.showPostList();
                     }
                     updateAdminUI();
                 }
-                if (tabName === 'games') renderGamesContent();
+                if (tabName === 'games') window.renderGamesContent();
             }
 
             // 选项卡点击时更新 hash
@@ -1890,18 +1890,6 @@
                     location.hash = '/' + tabName;
                 });
             });
-
-            // 重写 showPostDetail 使其同步 hash
-            const _origShowPostDetail = window.showPostDetail;
-            window.showPostDetail = function (issueNumber) {
-                location.hash = '/posts/' + issueNumber;
-            };
-
-            // 重写 backToListAndHome 使其回到专栏列表
-            const _origBackToListAndHome = window.backToListAndHome;
-            window.backToListAndHome = function () {
-                location.hash = '/posts';
-            };
 
             // 监听 hash 变化
             window.addEventListener('hashchange', function () {
@@ -2015,15 +2003,18 @@
                         style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"
                         allowfullscreen="true" scrolling="no" sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts"></iframe>
                 </div>
-                <div style="display:flex;justify-content:center;gap:12px;margin-top:12px;">
-                    <a href="https://www.bilibili.com/video/${bvid}" target="_blank" class="more-btn" style="text-decoration:none;">
-                        <i class="fas fa-external-link-alt"></i> 前往B站观看
-                    </a>
-                    <button onclick="closePlayer()" class="more-btn" style="background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border-color);">
-                        <i class="fas fa-times"></i> 关闭播放器
-                    </button>
-                </div>
             `;
+            // 在"更多精彩"旁显示关闭按钮
+            const moreWrapper = document.querySelector('.more-btn-wrapper');
+            if (moreWrapper && !document.getElementById('closePlayerBtn')) {
+                const closeBtn = document.createElement('button');
+                closeBtn.id = 'closePlayerBtn';
+                closeBtn.className = 'more-btn';
+                closeBtn.style.cssText = 'background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border-color);margin-left:8px;';
+                closeBtn.innerHTML = '<i class="fas fa-times"></i> 关闭播放器';
+                closeBtn.onclick = closePlayer;
+                moreWrapper.appendChild(closeBtn);
+            }
         }
 
         function closePlayer() {
@@ -2033,6 +2024,8 @@
                 playerEl.style.display = 'none';
                 playerEl.innerHTML = '';
             }
+            const closeBtn = document.getElementById('closePlayerBtn');
+            if (closeBtn) closeBtn.remove();
         }
 
         function escapeHtml(text) {
@@ -2439,20 +2432,11 @@
         // 返回列表按键：回到专栏列表，隐藏按键
         window.backToListAndHome = async function () {
             if (backBtn) backBtn.style.display = 'none';
-            // 重置专栏状态并回到列表
             currentView = 'list';
             currentPostId = null;
             editingIssueNumber = null;
             document.getElementById('postsSectionTitle').textContent = '洛谷 · 文章列表';
             document.getElementById('editorContainer').style.display = 'none';
-            // 切换到专栏选项卡
-            const postsBtn = document.querySelector('.tab-btn[data-tab="posts"]');
-            const postsTab = document.getElementById('tab-posts');
-            const homeTab = document.getElementById('tab-home');
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            if (postsBtn) postsBtn.classList.add('active');
-            if (postsTab) postsTab.classList.remove('hidden');
             await renderPostList(false);
             updateAdminUI();
         };
