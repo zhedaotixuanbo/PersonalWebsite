@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>zhedaotixuanbo · 个人主页</title>
+    <!-- 动态 favicon（头像加载后自动更新） -->
+    <link rel="icon" id="faviconLink" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%234a5a72'/></svg>">
+    <meta name="referrer" content="no-referrer">
     <!-- Font Awesome 图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- 引入 markdown-it 核心库 -->
@@ -237,18 +240,7 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: var(--bg-card);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 52px;
-            font-weight: 400;
-            color: var(--text-muted);
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="40" r="26" fill="%23303b4b"/><circle cx="50" cy="40" r="22" fill="%234a5a72"/><circle cx="38" cy="35" r="4" fill="%237a8ba8"/><circle cx="62" cy="35" r="4" fill="%237a8ba8"/><path d="M38 52 Q50 62 62 52" stroke="%23d4777a" stroke-width="4" fill="none" stroke-linecap="round"/></svg>');
-            background-size: 70%;
-            background-position: center 55%;
-            background-repeat: no-repeat;
-            background-color: var(--bg-card-alt);
+            background: var(--bg-card-alt);
             transition: background var(--transition), background-color var(--transition);
         }
 
@@ -1364,7 +1356,7 @@
     </button>
 
     <!-- ===== 左下角返回按钮（固定，详情页显示） ===== -->
-    <button class="back-btn-fixed" id="backBtnFixed" onclick="showPostList()">
+    <button class="back-btn-fixed" id="backBtnFixed" onclick="backToListAndHome()">
         <i class="fas fa-arrow-left"></i>
         <span id="backBtnLabel">返回列表</span>
     </button>
@@ -1670,6 +1662,39 @@
             }
         }
 
+        // ----- 更新浏览器选项卡图标 -----
+        function updateFavicon(avatarUrl) {
+            if (!avatarUrl) return;
+            const favicon = document.getElementById('faviconLink');
+            if (!favicon) return;
+            // 用 canvas 将头像裁成圆形再设为 favicon
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function () {
+                const size = 64;
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+                ctx.clip();
+                ctx.drawImage(img, 0, 0, size, size);
+                ctx.restore();
+                try {
+                    favicon.href = canvas.toDataURL('image/png');
+                } catch (e) {
+                    // base64 头像跨域受限时，直接用原始 URL
+                    favicon.href = avatarUrl;
+                }
+            };
+            img.onerror = function () {
+                favicon.href = avatarUrl;
+            };
+            img.src = avatarUrl;
+        }
+
         // ----- 加载头像 -----
         async function loadAvatar() {
             const avatarEl = document.getElementById('avatarDisplay');
@@ -1680,6 +1705,7 @@
                 avatarEl.style.backgroundPosition = 'center';
                 avatarEl.style.backgroundColor = 'transparent';
                 avatarEl.innerText = '';
+                updateFavicon(cached);
                 try {
                     const cloudAvatar = await fetchAvatarFromGitHub();
                     if (cloudAvatar && cloudAvatar !== cached) {
@@ -1689,6 +1715,7 @@
                         avatarEl.style.backgroundPosition = 'center';
                         avatarEl.style.backgroundColor = 'transparent';
                         avatarEl.innerText = '';
+                        updateFavicon(cloudAvatar);
                     }
                 } catch (e) { /* 静默失败 */ }
                 return;
@@ -1703,6 +1730,7 @@
                     avatarEl.style.backgroundPosition = 'center';
                     avatarEl.style.backgroundColor = 'transparent';
                     avatarEl.innerText = '';
+                    updateFavicon(cloudAvatar);
                 }
             } catch (err) {
                 console.warn('加载头像失败:', err);
@@ -1760,6 +1788,7 @@
                         avatarEl.style.backgroundPosition = 'center';
                         avatarEl.style.backgroundColor = 'transparent';
                         avatarEl.innerText = '';
+                        updateFavicon(imageData);
                         alert('✅ 头像已更新并同步到云端');
                     }
                 } catch (err) {
@@ -1820,7 +1849,7 @@
         window.exitAdminMode = exitAdminMode;
     </script>
 
-    <!-- 3. 选项卡切换 -->
+    <!-- 3. 选项卡切换 + Hash 路由 -->
     <script>
         (function () {
             const tabs = document.querySelectorAll('.tab-btn');
@@ -1832,27 +1861,70 @@
             };
             const backBtn = document.getElementById('backBtnFixed');
 
+            // 根据路由 hash 切换选项卡（不写 hash，避免循环）
+            function navigateToTab(tabName, postId) {
+                tabs.forEach(b => b.classList.remove('active'));
+                const targetBtn = document.querySelector('.tab-btn[data-tab="' + tabName + '"]');
+                if (targetBtn) targetBtn.classList.add('active');
+                Object.keys(contents).forEach(key => {
+                    contents[key].classList.toggle('hidden', key !== tabName);
+                });
+                if (backBtn) backBtn.style.display = 'none';
+
+                if (tabName === 'videos') renderVideoList();
+                if (tabName === 'posts') {
+                    if (postId) {
+                        showPostDetail(postId);
+                    } else {
+                        showPostList();
+                    }
+                    updateAdminUI();
+                }
+                if (tabName === 'games') renderGamesContent();
+            }
+
+            // 选项卡点击时更新 hash
             tabs.forEach(btn => {
                 btn.addEventListener('click', function () {
-                    tabs.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
                     const tabName = this.dataset.tab;
-                    Object.keys(contents).forEach(key => {
-                        contents[key].classList.toggle('hidden', key !== tabName);
-                    });
-
-                    if (backBtn) backBtn.style.display = 'none';
-
-                    if (tabName === 'videos') renderVideoList();
-                    if (tabName === 'posts') {
-                        showPostList();
-                        updateAdminUI();
-                    }
-                    if (tabName === 'games') {
-                        renderGamesContent();
-                    }
+                    location.hash = '/' + tabName;
                 });
             });
+
+            // 重写 showPostDetail 使其同步 hash
+            const _origShowPostDetail = window.showPostDetail;
+            window.showPostDetail = function (issueNumber) {
+                location.hash = '/posts/' + issueNumber;
+            };
+
+            // 重写 backToListAndHome 使其清空 hash 回首页
+            const _origBackToListAndHome = window.backToListAndHome;
+            window.backToListAndHome = function () {
+                location.hash = '/home';
+            };
+
+            // 监听 hash 变化
+            window.addEventListener('hashchange', function () {
+                handleRoute();
+            });
+
+            // 解析当前 hash 并切换到对应页面
+            function handleRoute() {
+                const hash = location.hash.replace(/^#\/?/, '') || 'home';
+                const parts = hash.split('/').filter(Boolean);
+
+                if (parts[0] === 'posts' && parts[1]) {
+                    // /posts/123 → 文章详情
+                    navigateToTab('posts', parseInt(parts[1]));
+                } else if (['home', 'games', 'videos', 'posts'].includes(parts[0])) {
+                    navigateToTab(parts[0]);
+                } else {
+                    navigateToTab('home');
+                }
+            }
+
+            // 页面加载时根据 hash 还原状态
+            handleRoute();
         })();
     </script>
 
@@ -1892,8 +1964,8 @@
     <script>
         const VIDEO_LIST = [
             { title: '【Roblox 阳光群岛】不是？你告诉我涂装是这么设计的？', cover: 'https://i0.hdslb.com/bfs/archive/259d7877b761f87aa84d958eae6d47ebb0eb5ebe.jpg', date: '2024-08-10', link: 'https://www.bilibili.com/video/BV1j4YLejEyG' },
-            { title: '【Roblox 阳光群岛】2.0更新后成就全收集！疯狂卷走所有阳光币！', cover: 'https://i0.hdslb.com/bfs/archive/6e8eb3da558fd9d32f6fff00cf21ef0581f459d1.jpg', date: '2024-07-09', link: 'https://www.bilibili.com/video/BV1o9avevEVh' },
-            { title: '【Roblox 阳光群岛】鸽了快一年，继续来填坑！宇通&大巴涂装制作（建议搭配上期一起食用）', cover: 'https://i0.hdslb.com/bfs/archive/490c4426f8026a8c5158c0a3ab2d0af2edf4ee96.jpg', date: '2025-07-04', link: 'https://www.bilibili.com/video/BV1Y43JzdEVS' }
+            { title: '【Roblox 阳光群岛】2.0更新后成就全收集！疯狂卷走所有阳光币！', cover: 'https://i2.hdslb.com/bfs/archive/6e8eb3da558fd9d32f6fff00cf21ef0581f459d1.jpg', date: '2024-07-09', link: 'https://www.bilibili.com/video/BV1o9avevEVh' },
+            { title: '【Roblox 阳光群岛】鸽了快一年，继续来填坑！宇通&大巴涂装制作（建议搭配上期一起食用）', cover: 'https://i1.hdslb.com/bfs/archive/490c4426f8026a8c5158c0a3ab2d0af2edf4ee96.jpg', date: '2025-07-04', link: 'https://www.bilibili.com/video/BV1Y43JzdEVS' }
         ];
 
         function renderVideoList() {
@@ -1911,7 +1983,7 @@
                                             <div class="video-item-title">${escapeHtml(v.title)}</div>
                                             <div class="video-item-meta"><span><i class="fas fa-calendar-alt"></i> ${v.date}</span></div>
                                         </div>
-                                        <div class="video-cover"><img src="${v.cover}" alt="${escapeHtml(v.title)}" loading="lazy" onerror="this.style.display='none'"></div>
+                                        <div class="video-cover"><img src="${v.cover}" alt="${escapeHtml(v.title)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 160 100%22><rect width=%22160%22 height=%22100%22 fill=%22%23333%22/><text x=%2280%22 y=%2255%22 text-anchor=%22middle%22 fill=%22%23888%22 font-size=%2214%22>暂无封面</text></svg>'"></div>
                                     </a>
                                 `;
             });
@@ -2304,9 +2376,33 @@
             document.getElementById('postsSectionTitle').textContent = '洛谷 · 文章列表';
             document.getElementById('editorContainer').style.display = 'none';
             if (backBtn) backBtn.style.display = 'none';
-            await renderPostList();
+            // 用缓存渲染列表，缓存为空时从 GitHub 加载
+            await renderPostList(false);
             updateAdminUI();
         }
+
+        function switchToHomeTab() {
+            const homeBtn = document.querySelector('.tab-btn[data-tab="home"]');
+            const postsTab = document.getElementById('tab-posts');
+            const homeTab = document.getElementById('tab-home');
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if (homeBtn) homeBtn.classList.add('active');
+            if (homeTab) homeTab.classList.remove('hidden');
+            if (postsTab) postsTab.classList.add('hidden');
+        }
+
+        // 返回列表按键：先切回首页，再隐藏按键
+        window.backToListAndHome = async function () {
+            if (backBtn) backBtn.style.display = 'none';
+            switchToHomeTab();
+            // 重置专栏状态
+            currentView = 'list';
+            currentPostId = null;
+            editingIssueNumber = null;
+            document.getElementById('editorContainer').style.display = 'none';
+            updateAdminUI();
+        };
 
         async function showPostDetail(issueNumber) {
             currentView = 'detail';
@@ -2345,11 +2441,15 @@
             document.getElementById('editorContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        async function renderPostList() {
+        async function renderPostList(forceRefresh = true) {
             const container = document.getElementById('postContainer');
             try {
-                const posts = await fetchPostsFromGitHub();
-                window._cachedPosts = posts;
+                // 优先使用缓存，避免返回列表时重复请求 GitHub
+                let posts = (!forceRefresh && window._cachedPosts) ? window._cachedPosts : null;
+                if (!posts) {
+                    posts = await fetchPostsFromGitHub();
+                    window._cachedPosts = posts;
+                }
 
                 if (!posts || posts.length === 0) {
                     container.innerHTML = `
