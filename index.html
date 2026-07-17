@@ -1415,7 +1415,7 @@
     </button>
 
     <!-- ===== 左下角返回按钮（固定，详情页显示） ===== -->
-    <button class="back-btn-fixed" id="backBtnFixed" onclick="location.hash='/posts'">
+    <button class="back-btn-fixed" id="backBtnFixed" onclick="handleBackBtn()">
         <i class="fas fa-arrow-left"></i>
         <span id="backBtnLabel">返回列表</span>
     </button>
@@ -1536,7 +1536,6 @@
                         </div>
                         <div class="editor-actions">
                             <button class="btn-save" onclick="savePost()"><i class="fas fa-save"></i> 保存文章</button>
-                            <button class="btn-cancel" onclick="cancelEdit()"><i class="fas fa-arrow-left"></i> 返回</button>
                         </div>
                     </div>
                     <div class="editor-right">
@@ -2672,7 +2671,20 @@
             if (postsTab) postsTab.classList.add('hidden');
         }
 
-        // 返回列表按键：回到专栏列表，隐藏按键
+        // 返回按键统一入口：根据当前视图决定行为
+        window.handleBackBtn = async function () {
+            if (currentView === 'edit') {
+                // 编辑器模式：询问是否保存
+                await cancelEdit();
+            } else if (currentView === 'detail') {
+                // 文章详情：回到列表
+                location.hash = '/posts';
+            } else {
+                location.hash = '/posts';
+            }
+        };
+
+        // 返回列表按键：回到专栏列表，隐藏按键，由路由统一处理渲染
         window.backToListAndHome = async function () {
             if (backBtn) backBtn.style.display = 'none';
             currentView = 'list';
@@ -2681,7 +2693,8 @@
             document.getElementById('postsSectionTitle').textContent = '洛谷 · 文章列表';
             document.getElementById('editorContainer').style.display = 'none';
             document.getElementById('postContainer').style.display = 'block';
-            await renderPostList(false);
+            location.hash = '/posts';
+            // hashchange 会触发 handleRoute → navigateToTab → showPostList，不需要手动渲染
             updateAdminUI();
         };
 
