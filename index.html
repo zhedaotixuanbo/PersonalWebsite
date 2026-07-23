@@ -986,6 +986,19 @@
                 gap: 6px;
             }
 
+            .editor-preview-body blockquote {
+                border-left: 4px solid var(--border-color);
+                background: var(--bg-card-alt, #f5f5f5);
+                margin: 1em 0;
+                padding: 12px 16px;
+                border-radius: 0 6px 6px 0;
+                color: var(--text-secondary);
+            }
+
+            .editor-preview-body blockquote p:last-child {
+                margin-bottom: 0;
+            }
+
             .editor-preview-body {
                 flex: 1;
                 overflow-y: auto;
@@ -1128,6 +1141,23 @@
                 .post-detail .post-item-body p {
                     margin-bottom: 1em;
                 }
+
+                .post-detail .post-item-body blockquote {
+                    border-left: 4px solid var(--border-color);
+                    background: var(--bg-card-alt, #f5f5f5);
+                    margin: 1em 0;
+                    padding: 12px 16px;
+                    border-radius: 0 6px 6px 0;
+                    color: var(--text-secondary);
+                }
+
+                    .post-detail .post-item-body blockquote p {
+                        margin-bottom: 0.5em;
+                    }
+
+                    .post-detail .post-item-body blockquote p:last-child {
+                        margin-bottom: 0;
+                    }
 
         /* ===== 返回按钮（固定左下角，类似主题切换） ===== */
         .back-btn-fixed {
